@@ -11,9 +11,11 @@ class Tweet extends Model
     protected $fillable = [
         'body',
         'user_id',
+        'image',
+        'video',
     ];
 
-    // Every tweet belongs to one user
+    // Every tweet (belongs to) one user
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
