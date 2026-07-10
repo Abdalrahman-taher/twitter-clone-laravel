@@ -192,11 +192,38 @@
                     <div class="pl-16">
                         <p class="text-base width-auto font-medium text-white flex-shrink">
                             {{ $tweet->body }}
+                            {{-- Show image if tweet has one --}}
+                            @if($tweet->image)
+
+                                <img
+                                    src="{{ asset('storage/' . $tweet->image) }}"
+                                    class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px] object-cover"
+                                    alt="Tweet Image">
+
+                            @endif
+
+                            {{-- Show video if tweet has one --}}
+                            @if($tweet->video)
+
+                                <video
+                                    controls
+                                    class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px]">
+
+                                    <source
+                                        src="{{ asset('storage/' . $tweet->video) }}"
+                                        type="video/mp4">
+
+                                    Your browser does not support the video tag.
+
+                                </video>
+
+                            @endif
+
                         </p>
 
                         <div class="flex items-center py-4">
                             <div
-                                class="flex-1 flex items-center text-white text-xs text-gray-400 hover:text-blue-400 transition duration-350 ease-in-out">
+                                class="flex-1 flex items-center text-white text-xs hover:text-blue-400 transition duration-350 ease-in-out">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
                                     <g>
                                         <path
@@ -206,7 +233,7 @@
                                 12.3 k
                             </div>
                             <div
-                                class="flex-1 flex items-center text-white text-xs text-gray-400 hover:text-green-400 transition duration-350 ease-in-out">
+                                class="flex-1 flex items-center text-white text-xs hover:text-green-400 transition duration-350 ease-in-out">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
                                     <g>
                                         <path
@@ -216,7 +243,7 @@
                                 14 k
                             </div>
                             <div
-                                class="flex-1 flex items-center text-white text-xs text-gray-400 hover:text-red-600 transition duration-350 ease-in-out">
+                                class="flex-1 flex items-center text-white text-xs hover:text-red-600 transition duration-350 ease-in-out">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
                                     <g>
                                         <path
@@ -226,7 +253,7 @@
                                 14 k
                             </div>
                             <div
-                                class="flex-1 flex items-center text-white text-xs text-gray-400 hover:text-blue-400 transition duration-350 ease-in-out">
+                                class="flex-1 flex items-center text-white text-xs hover:text-blue-400 transition duration-350 ease-in-out">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
                                     <g>
                                         <path

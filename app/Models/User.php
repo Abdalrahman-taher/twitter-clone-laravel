@@ -12,8 +12,21 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Tweet;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'avatar',
+    'cover',
+    'username',
+    'bio',
+    'location',
+    'website',
+])]
+
 #[Hidden(['password', 'remember_token'])]
+
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
