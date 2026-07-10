@@ -13,6 +13,8 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+
     Route::post('/tweets', [TweetController::class, 'store'])->name('tweets.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
