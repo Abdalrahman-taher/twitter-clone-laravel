@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Tweet;
 
 class HomeController extends Controller
 {
-   public function index()
-   {
-       return view('home.index');
-   }
-
+    public function index()
+    {
+        // Get all tweets (newest first) with (Eager Loading)
+        $tweets = Tweet::with('user')->latest()->get();
+        // Send tweets to the home page
+        return view('home.index', compact('tweets'));
+    }
 }
