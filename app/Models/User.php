@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Tweet;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable([
     'name',
@@ -50,6 +51,12 @@ class User extends Authenticatable
     public function tweets(): HasMany
     {
         return $this->hasMany(Tweet::class);
+    }
+
+    // One user can like many tweets
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(Tweet::class, 'likes');
     }
 }
 

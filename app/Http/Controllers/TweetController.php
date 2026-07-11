@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tweet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -83,5 +84,18 @@ class TweetController extends Controller
         // =====================================================
 
         return redirect()->back();
+    }
+
+
+    // =====================================================
+    // Like / Unlike Tweet
+    // If the user already liked the tweet, remove the like.
+    // =====================================================
+
+    public function like(Tweet $tweet)
+    {
+        auth()->user()->likes()->toggle($tweet->id);
+
+        return back();
     }
 }

@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::post('/tweets/{tweet}/like', [TweetController::class, 'like'])->name('tweets.like');
 });
 
 require __DIR__.'/auth.php';

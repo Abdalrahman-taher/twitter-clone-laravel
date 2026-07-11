@@ -40,10 +40,19 @@
 
             {{-- User Profile Image --}}
             <div class="m-2 w-10 py-1">
-                <img
-                    class="inline-block h-10 w-10 rounded-full"
-                    src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
-                    alt="">
+
+                @if(auth()->user()->avatar)
+                    <img
+                        class="inline-block h-10 w-10 rounded-full object-cover"
+                        src="{{ asset('storage/' . auth()->user()->avatar) }}"
+                        alt="{{ auth()->user()->name }}">
+                @else
+                    <img
+                        class="inline-block h-10 w-10 rounded-full"
+                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                        alt="Default Avatar">
+                @endif
+
             </div>
 
             {{-- Tweet Text Area --}}
@@ -169,59 +178,84 @@
                 <article class="hover:bg-gray-800 transition duration-350 ease-in-out">
 
                     <div class="flex flex-shrink-0 p-4 pb-0">
-                        <a href="#" class="flex-shrink-0 group block">
+
+                        <a href="{{ route('profile.show', $tweet->user->username) }}"
+                           class="flex-shrink-0 group block">
+
                             <div class="flex items-center">
+
                                 <div>
-                                    <img class="inline-block h-10 w-10 rounded-full"
-                                         src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
-                                         alt="">
+
+                                    @if($tweet->user->avatar)
+                                        <img
+                                            class="inline-block h-10 w-10 rounded-full object-cover"
+                                            src="{{ asset('storage/' . $tweet->user->avatar) }}"
+                                            alt="{{ $tweet->user->name }}">
+                                    @else
+                                        <svg
+                                            class="inline-block h-10 w-10 rounded-full bg-gray-700 text-gray-500"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/>
+                                        </svg>
+                                    @endif
+
                                 </div>
+
                                 <div class="ml-3">
+
                                     <p class="text-base leading-6 font-medium text-white">
+
                                         {{ $tweet->user->name }}
-                                        <span
-                                            class="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                                        {{ $tweet->created_at->diffForHumans() }}
+
+                                        <span class="text-gray-500 font-normal">
+                                        {{ $tweet->user->username }}
                                     </span>
+
+                                        <span class="text-sm leading-5 font-medium text-gray-400">
+                                        · {{ $tweet->created_at->diffForHumans() }}
+                                    </span>
+
                                     </p>
+
                                 </div>
+
                             </div>
+
                         </a>
+
                     </div>
 
                     <div class="pl-16">
+
                         <p class="text-base width-auto font-medium text-white flex-shrink">
                             {{ $tweet->body }}
-                            {{-- Show image if tweet has one --}}
-                            @if($tweet->image)
-
-                                <img
-                                    src="{{ asset('storage/' . $tweet->image) }}"
-                                    class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px] object-cover"
-                                    alt="Tweet Image">
-
-                            @endif
-
-                            {{-- Show video if tweet has one --}}
-                            @if($tweet->video)
-
-                                <video
-                                    controls
-                                    class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px]">
-
-                                    <source
-                                        src="{{ asset('storage/' . $tweet->video) }}"
-                                        type="video/mp4">
-
-                                    Your browser does not support the video tag.
-
-                                </video>
-
-                            @endif
-
                         </p>
 
+                        @if($tweet->image)
+                            <img
+                                src="{{ asset('storage/' . $tweet->image) }}"
+                                class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px] object-cover"
+                                alt="Tweet Image">
+                        @endif
+
+                        @if($tweet->video)
+                            <video
+                                controls
+                                class="mt-3 rounded-2xl border border-gray-700 w-full max-h-[500px]">
+
+                                <source
+                                    src="{{ asset('storage/' . $tweet->video) }}"
+                                    type="video/mp4">
+
+                                Your browser does not support the video tag.
+
+                            </video>
+                        @endif
+
                         <div class="flex items-center py-4">
+
                             <div
                                 class="flex-1 flex items-center text-white text-xs hover:text-blue-400 transition duration-350 ease-in-out">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
@@ -232,44 +266,78 @@
                                 </svg>
                                 12.3 k
                             </div>
-                            <div
-                                class="flex-1 flex items-center text-white text-xs hover:text-green-400 transition duration-350 ease-in-out">
-                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
-                                    <g>
-                                        <path
-                                            d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z"></path>
-                                    </g>
-                                </svg>
-                                14 k
-                            </div>
+
+                            <form
+                                action="{{ route('tweets.like', $tweet) }}"
+                                method="POST"
+                                class="flex-1">
+
+                                @csrf
+
+                                {{-- ===================================================== --}}
+                                {{-- Check if the logged in user already liked this tweet  --}}
+                                {{-- If true  => heart will be red                         --}}
+                                {{-- If false => heart will stay white                     --}}
+                                {{-- ===================================================== --}}
+
+
                             <div
                                 class="flex-1 flex items-center text-white text-xs hover:text-red-600 transition duration-350 ease-in-out">
-                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
-                                    <g>
-                                        <path
-                                            d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z"></path>
-                                    </g>
-                                </svg>
-                                14 k
+
+                                <form
+                                    action="{{ route('tweets.like', $tweet) }}"
+                                    method="POST">
+
+                                    @csrf
+
+                                    {{-- Check if the current user already liked this tweet --}}
+                                    @php($liked = $tweet->isLikedBy(auth()->user()))
+
+                                    <button type="submit">
+
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                            class="w-5 h-5 mr-2 {{ $liked ? 'text-red-500' : 'text-white' }}">
+
+                                            <g>
+                                                <path
+                                                    d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z">
+                                                </path>
+                                            </g>
+
+                                        </svg>
+
+                                    </button>
+
+                                </form>
+
+                                {{-- Show how many users liked this tweet --}}
+                                {{ $tweet->likes->count() }}
+
                             </div>
+
                             <div
                                 class="flex-1 flex items-center text-white text-xs hover:text-blue-400 transition duration-350 ease-in-out">
+
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
                                     <g>
                                         <path
-                                            d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"></path>
-                                        <path
-                                            d="M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z"></path>
+                                            d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06z">
+                                        </path>
                                     </g>
                                 </svg>
+
                             </div>
+
                         </div>
 
                     </div>
+
                     <hr class="border-gray-800">
+
                 </article>
             </li>
         @endforeach
     </ul>
-
 </div>
