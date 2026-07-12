@@ -8,8 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use App\Models\Media;
 
 class ProfileController extends Controller
 {
@@ -18,14 +18,38 @@ class ProfileController extends Controller
      */
     public function show(User $user): View
     {
-        $tweets = $user->tweets()->latest()->get();
+        // =====================================================
+        // Load User Media + Tweet Media
+        // User media contains:
+        // - avatar
+        // - cover
+        //
+        // Tweet media contains:
+        // - images
+        // - videos
+        // =====================================================
+
+        $user->load([
+            'media',
+            'tweets.media',
+        ]);
+
+
+        // =====================================================
+        // Get User Tweets
+        // Tweets are already loaded with their media
+        // =====================================================
+
+        $tweets = $user->tweets()
+            ->latest()
+            ->get();
+
 
         return view('profile.show', [
             'user' => $user,
             'tweets' => $tweets,
         ]);
     }
-
     /**
      * Display the user's profile form.
      */
@@ -49,28 +73,37 @@ class ProfileController extends Controller
 
         $request->user()->fill($data);
 
-        // Save the new avatar if the user uploaded one
+        // =====================================================
+        // Upload User Avatar
+        // Save avatar as media record
+        // =====================================================
         if ($request->hasFile('avatar')) {
 
-            // Delete the old avatar so we don't leave unused files behind
-            if ($request->user()->avatar) {
-                Storage::disk('public')->delete($request->user()->avatar);
-            }
+            $path = $request->file('avatar')->store('avatars', 'public');
 
-            $request->user()->avatar = $request->file('avatar')->store('avatars', 'public');
+            $request->user()->media()->create([
+                'collection' => 'avatar',
+                'path' => $path,
+                'mime_type' => $request->file('avatar')->getMimeType(),
+                'size' => $request->file('avatar')->getSize(),
+            ]);
         }
+        // =====================================================
+        // Upload User Cover
+        // Save cover as media record
+        // =====================================================
 
-        // Save the new cover if the user uploaded one
         if ($request->hasFile('cover')) {
 
-            // Delete the old cover so we don't leave unused files behind
-            if ($request->user()->cover) {
-                Storage::disk('public')->delete($request->user()->cover);
-            }
+            $path = $request->file('cover')->store('covers', 'public');
 
-            $request->user()->cover = $request->file('cover')->store('covers', 'public');
+            $request->user()->media()->create([
+                'collection' => 'cover',
+                'path' => $path,
+                'mime_type' => $request->file('cover')->getMimeType(),
+                'size' => $request->file('cover')->getSize(),
+            ]);
         }
-
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
