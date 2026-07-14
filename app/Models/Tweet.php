@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Traits\HasMedias;
-
+use App\Models\Comment;
 
 
 class Tweet extends Model
@@ -35,6 +35,12 @@ class Tweet extends Model
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'likes');
+    }
+
+    // One tweet can have many comments
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
     // =====================================================

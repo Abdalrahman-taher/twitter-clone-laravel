@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Traits\HasMedias;
+use App\Models\Comment;
 
 #[Fillable([
     'name',
@@ -62,6 +63,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Tweet::class, 'likes');
     }
 
+    // One user can have many comments
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
 
 

@@ -17,9 +17,14 @@ class HomeController extends Controller
             'user',
             'medias',
             'likes',
+            'comments.user',
         ])
             // Count the number of likes for each tweet
-            ->withCount('likes')
+            ->withCount
+            (
+                'likes',
+                'comments',
+            )
             ->latest()
             ->get();
 

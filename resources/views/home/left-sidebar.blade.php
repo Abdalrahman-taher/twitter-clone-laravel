@@ -88,10 +88,13 @@
 
         <!-- User -->
         <!-- Current User -->
-        <div class="absolute" style="bottom: 2rem;">
-            <div class="flex-shrink-0 flex hover:bg-gray-800 rounded-full px-4 py-3 mt-12 mr-2">
 
-                <a href="{{ route('profile.show', auth()->user()) }}" class="flex-shrink-0 group block">
+        <div class="absolute bottom-8 w-full">
+
+            <div class="flex-shrink-0 flex hover:bg-gray-800 rounded-full px-4 py-3 mr-2">
+
+                <a href="{{ route('profile.show', auth()->user()) }}"
+                   class="flex-shrink-0 group block">
 
                     <div class="flex items-center">
 
@@ -134,29 +137,56 @@
 
                         </div>
 
+
                         <div class="ml-3">
 
                             <p class="text-base leading-6 font-medium text-white">
                                 {{ auth()->user()->name }}
                             </p>
 
+
                             <p class="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300">
 
                                 @if(auth()->user()->username)
+
                                     {{ '@' . auth()->user()->username }}
+
                                 @else
+
                                     {{ '@username' }}
+
                                 @endif
 
                             </p>
 
                         </div>
 
+
                     </div>
 
                 </a>
 
             </div>
+
+
+            {{-- Logout Button --}}
+
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                class="px-4 mt-3">
+
+                @csrf
+
+                <button
+                    type="submit"
+                    class="text-white hover:text-red-500 transition duration-300">
+
+                    Logout
+
+                </button>
+
+            </form>
         </div>
     </div>
 </div>

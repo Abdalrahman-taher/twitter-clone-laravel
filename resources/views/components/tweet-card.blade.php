@@ -151,12 +151,13 @@
 
                     </svg>
 
+
                     <span>
-                        12.3k
+        {{ $tweet->comments_count }}
+
                     </span>
 
                 </div>
-
 
                 {{-- Like Button --}}
                 <form
@@ -194,7 +195,6 @@
                 </form>
 
 
-
                 {{-- Share --}}
                 <div
                     class="flex items-center hover:text-blue-400 transition duration-300 cursor-pointer">
@@ -216,6 +216,72 @@
 
             </div>
 
+
+            {{-- ========================================================= --}}
+            {{-- Comments List                                             --}}
+            {{-- Display comments attached to this tweet                   --}}
+            {{-- ========================================================= --}}
+
+            <div class="mt-4 space-y-3">
+
+
+                @foreach($tweet->comments as $comment)
+
+                    <div class="flex items-start">
+
+                        <div class="ml-3">
+
+                            <p class="text-sm text-white font-medium">
+                                {{ $comment->user->name }}
+
+                                <span class="text-gray-500">
+                        {{ $comment->user->username }}
+                    </span>
+                            </p>
+
+
+                            <p class="text-sm text-gray-300">
+                                {{ $comment->body }}
+                            </p>
+
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+
+            </div>
+
+
+            {{-- Add Comment Form --}}
+
+            <form
+                action="{{ route('comments.store', $tweet) }}"
+                method="POST"
+                class="mt-4 flex">
+
+                @csrf
+
+
+                <input
+                    type="text"
+                    name="body"
+                    placeholder="Post your reply"
+                    class="flex-1 bg-gray-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
+
+
+                <button
+                    type="submit"
+                    class="ml-3 px-4 rounded-full bg-blue-500 text-white text-sm">
+
+                    Reply
+
+                </button>
+
+
+            </form>
 
         </div>
 
