@@ -30,8 +30,8 @@ class ProfileController extends Controller
         // =====================================================
 
         $user->load([
-            'media',
-            'tweets.media',
+            'medias',
+            'tweets.medias',
         ]);
 
 
@@ -81,7 +81,7 @@ class ProfileController extends Controller
 
             $path = $request->file('avatar')->store('avatars', 'public');
 
-            $request->user()->media()->create([
+            $request->user()->medias()->create([
                 'collection' => 'avatar',
                 'path' => $path,
                 'mime_type' => $request->file('avatar')->getMimeType(),
@@ -97,7 +97,7 @@ class ProfileController extends Controller
 
             $path = $request->file('cover')->store('covers', 'public');
 
-            $request->user()->media()->create([
+            $request->user()->medias()->create([
                 'collection' => 'cover',
                 'path' => $path,
                 'mime_type' => $request->file('cover')->getMimeType(),

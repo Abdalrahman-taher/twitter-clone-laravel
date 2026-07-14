@@ -1,4 +1,5 @@
 <!-- Left Sidebar -->
+
 <div style="width: 275px;">
     <div class="overflow-y-auto fixed h-screen pr-3" style="width: 275px;">
         <!-- Logo -->
@@ -102,7 +103,7 @@
                             {{-- ========================================================= --}}
 
                             @php
-                                $avatar = auth()->user()->media
+                                $avatar = auth()->user()->medias
                                     ->where('collection', 'avatar')
                                     ->first();
                             @endphp

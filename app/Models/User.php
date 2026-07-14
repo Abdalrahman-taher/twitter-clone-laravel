@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-
+use App\Traits\HasMedias;
 
 #[Fillable([
     'name',
@@ -34,8 +34,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
-
+    use HasFactory, Notifiable, HasMedias;
 
     /**
      * Get the attributes that should be cast.
@@ -61,14 +60,6 @@ class User extends Authenticatable
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(Tweet::class, 'likes');
-    }
-
-
-    // One user can have many media files
-    // (avatar, cover, and any future media)
-    public function medias(): MorphMany
-    {
-        return $this->morphMany(Media::class, 'mediable');
     }
 
 }

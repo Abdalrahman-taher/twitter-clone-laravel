@@ -47,7 +47,7 @@ class TweetController extends Controller
 
                 $path = $image->store('tweets/images', 'public');
 
-                $tweet->media()->create([
+                $tweet->medias()->create([
                     'collection' => 'tweet',
                     'path' => $path,
                     'mime_type' => $image->getMimeType(),
@@ -68,7 +68,7 @@ class TweetController extends Controller
 
                 $path = $video->store('tweets/videos', 'public');
 
-                $tweet->media()->create([
+                $tweet->medias()->create([
                     'collection' => 'tweet',
                     'path' => $path,
                     'mime_type' => $video->getMimeType(),

@@ -47,7 +47,7 @@
 
                         @php
                             // Get the latest cover file from user's media collection
-                            $cover = $user->media
+                            $cover = $user->medias
                                 ->where('collection', 'cover')
                                 ->first();
                         @endphp
@@ -77,7 +77,7 @@
 
                                     @php
                                         // Get the latest avatar file from user's media collection
-                                        $avatar = $user->media
+                                        $avatar = $user->medias
                                             ->where('collection', 'avatar')
                                             ->first();
                                     @endphp
@@ -191,7 +191,7 @@
 
                                                         @php
                                                             // Get user's avatar from media table
-                                                            $avatar = $user->media
+                                                            $avatar = $user->medias
                                                                 ->where('collection', 'avatar')
                                                                 ->first();
                                                         @endphp
@@ -237,7 +237,7 @@
                                                     {{-- Get images and videos from media table                   --}}
                                                     {{-- ========================================================= --}}
 
-                                                    @foreach($tweet->media as $media)
+                                                    @foreach($tweet->medias as $media)
 
                                                         {{-- Display images --}}
                                                         @if(str_starts_with($media->mime_type, 'image'))

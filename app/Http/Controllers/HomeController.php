@@ -15,7 +15,7 @@ class HomeController extends Controller
 
         $tweets = Tweet::with([
             'user',
-            'media',
+            'medias',
             'likes',
         ])
             // Count the number of likes for each tweet

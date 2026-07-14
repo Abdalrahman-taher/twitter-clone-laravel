@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Traits\HasMedias;
+
+
 
 class Tweet extends Model
 {
+
+    use HasMedias;
+
     // Allow these fields to be saved
     protected $fillable = [
         'body',
@@ -18,15 +24,6 @@ class Tweet extends Model
 //        'image'=> 'array',
 //        'video',
     ];
-
-
-    // One tweet can have many media files
-    // (images and videos)
-    public function medias(): MorphMany
-    {
-        return $this->morphMany(Media::class, 'mediable');
-    }
-
 
     // Every tweet belongs to one user
     public function user(): BelongsTo
