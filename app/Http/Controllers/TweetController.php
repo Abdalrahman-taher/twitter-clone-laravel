@@ -120,4 +120,35 @@ class TweetController extends Controller
         // Return back to previous page
         return back();
     }
+
+    public function edit(Tweet $tweet)
+    {
+        if ($tweet->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('tweets.edit-tweet', compact('tweet'));
+    }
+
+    public function update(Request $request, Tweet $tweet)
+    {
+        // Check if the logged-in user owns this tweet
+        if ($tweet->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate tweet text
+        $request->validate([
+            'body' => 'required|max:280',
+        ]);
+
+        // Update tweet body
+        $tweet->update([
+          'body' => $request->body,
+        ]);
+
+        // Redirect to home page
+        return redirect()->route('home');
+
+    }
 }

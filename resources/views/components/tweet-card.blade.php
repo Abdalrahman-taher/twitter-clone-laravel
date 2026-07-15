@@ -264,13 +264,11 @@
 
                 @csrf
 
-
                 <input
                     type="text"
                     name="body"
                     placeholder="Post your reply"
                     class="flex-1 bg-gray-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
-
 
                 <button
                     type="submit"
@@ -280,33 +278,45 @@
 
                 </button>
 
-
             </form>
 
 
-            @if(auth()->id() == $tweet->user_id)
+            {{-- Tweet Owner Actions --}}
+            @if(auth()->id() === $tweet->user_id)
 
-                <form
-                    action="{{ route('tweets.destroy', $tweet) }}"
-                    method="POST"
-                    class="mt-3">
+                <div class="mt-3 flex items-center gap-4">
 
-                    @csrf
-                    @method('DELETE')
+                    <a
+                        href="{{ route('tweets.edit', $tweet) }}"
+                        class="text-blue-500 hover:text-blue-700 text-sm">
 
-                    <button
-                        type="submit"
-                        class="text-red-500 hover:text-red-700 text-sm">
+                        Edit Tweet
 
-                        Delete Tweet
+                    </a>
 
-                    </button>
+                    <form
+                        action="{{ route('tweets.destroy', $tweet) }}"
+                        method="POST">
 
-                </form>
+                        @csrf
+                        @method('DELETE')
+
+                        <button
+                            type="submit"
+                            class="text-red-500 hover:text-red-700 text-sm">
+
+                            Delete Tweet
+
+                        </button>
+
+                    </form>
+
+                </div>
 
             @endif
 
         </div>
 
     </article>
+
 </li>
