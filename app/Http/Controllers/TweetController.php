@@ -95,4 +95,29 @@ class TweetController extends Controller
 
         return back();
     }
+
+    // =====================================================
+// Delete Tweet
+// Only the owner of the tweet can delete it.
+// =====================================================
+
+    public function destroy(Tweet $tweet)
+    {
+        // Check if the logged-in user owns this tweet
+        if ($tweet->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+    // Delete all likes
+        $tweet->likes()->detach();
+
+    // Delete all comments
+        $tweet->comments()->delete();
+
+    // Delete the tweet
+        $tweet->delete();
+
+        // Return back to previous page
+        return back();
+    }
 }

@@ -283,6 +283,29 @@
 
             </form>
 
+
+            @if(auth()->id() == $tweet->user_id)
+
+                <form
+                    action="{{ route('tweets.destroy', $tweet) }}"
+                    method="POST"
+                    class="mt-3">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="text-red-500 hover:text-red-700 text-sm">
+
+                        Delete Tweet
+
+                    </button>
+
+                </form>
+
+            @endif
+
         </div>
 
     </article>

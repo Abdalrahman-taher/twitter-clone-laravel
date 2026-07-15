@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/tweets/{tweet}/like', [TweetController::class, 'like'])->name('tweets.like');
 
     Route::post('/tweets/{tweet}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+    Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy'])->name('tweets.destroy');
+
 });
 
 require __DIR__.'/auth.php';
