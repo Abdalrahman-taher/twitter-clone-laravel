@@ -108,13 +108,13 @@ class TweetController extends Controller
             abort(403);
         }
 
-    // Delete all likes
+        // Delete all likes
         $tweet->likes()->detach();
 
-    // Delete all comments
+        // Delete all comments
         $tweet->comments()->delete();
 
-    // Delete the tweet
+        // Delete the tweet
         $tweet->delete();
 
         // Return back to previous page
@@ -144,7 +144,7 @@ class TweetController extends Controller
 
         // Update tweet body
         $tweet->update([
-          'body' => $request->body,
+            'body' => $request->body,
         ]);
 
         // Redirect to home page

@@ -19,13 +19,11 @@ class CommentController extends Controller
             'body' => 'required|max:280',
         ]);
 
-
-        // Create comment for the tweet
+        // Create comment as a reply (stored in tweets table)
         $tweet->comments()->create([
             'user_id' => auth()->id(),
             'body' => $request->body,
         ]);
-
 
         // Return back to tweet feed
         return back();

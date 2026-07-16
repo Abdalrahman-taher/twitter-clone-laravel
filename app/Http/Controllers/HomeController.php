@@ -9,19 +9,20 @@ class HomeController extends Controller
     public function index()
     {
         // =====================================================
-        // Get all tweets (newest first)
-        // Eager load user, media and likes to improve performance
+        // Get all parent tweets (newest first)
+        // Exclude comments by checking parent_id is null
+        // Eager load user, media, likes and comments
         // =====================================================
 
-        $tweets = Tweet::with([
-            'user',
-            'medias',
-            'likes',
-            'comments.user',
-        ])
-            // Count the number of likes for each tweet
-            ->withCount
-            (
+        $tweets = Tweet::whereNull('parent_id')
+            ->with([
+                'user',
+                'medias',
+                'likes',
+                'comments.user',
+            ])
+            // Count the number of likes and comments for each tweet
+            ->withCount(
                 'likes',
                 'comments',
             )

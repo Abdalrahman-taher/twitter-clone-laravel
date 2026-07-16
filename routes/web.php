@@ -31,7 +31,6 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy'])->name('tweets.destroy');
 
-    Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy'])->name('tweets.destroy');
 
 });
 

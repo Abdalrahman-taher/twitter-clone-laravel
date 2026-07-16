@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Traits\HasMedias;
-use App\Models\Comment;
 
 
 class Tweet extends Model
@@ -21,6 +20,7 @@ class Tweet extends Model
     protected $fillable = [
         'body',
         'user_id',
+        'parent_id',
 //        'image'=> 'array',
 //        'video',
     ];
@@ -37,19 +37,31 @@ class Tweet extends Model
         return $this->belongsToMany(User::class, 'likes');
     }
 
-    // One tweet can have many comments
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
-    }
 
     // =====================================================
     // Check if a specific user liked this tweet
     // Returns:
     // true  => user liked the tweet
     // false => user didn't like the tweet
+    // =====================================================
+
     public function isLikedBy(User $user): bool
     {
         return $this->likes->contains($user);
     }
+
+    // Parent Tweet
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Tweet::class, 'parent_id');
+    }
+
+
+
+// Comments
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Tweet::class, 'parent_id');
+    }
+
 }
