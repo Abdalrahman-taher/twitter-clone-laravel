@@ -100,63 +100,12 @@
 
             <div class="flex">
 
-                {{-- ========================================================= --}}
-                {{-- Upload Image Button                                       --}}
-                {{-- Opens the hidden image input when clicked.                --}}
-                {{-- ========================================================= --}}
-                <div class="flex-1 text-center px-1 py-1 m-2">
 
-                    <label
-                        for="imageInput"
-                        class="cursor-pointer mt-1 group flex items-center justify-center text-blue-400 px-2 py-2 rounded-full hover:bg-gray-800 hover:text-blue-300">
+                <x-media-picker
+                    imageInput="images"
+                    videoInput="videos"
+                />
 
-                        <svg
-                            class="h-7 w-6"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-
-                            <path
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-
-                        </svg>
-
-                    </label>
-
-                </div>
-
-                {{-- ========================================================= --}}
-                {{-- Upload Video Button                                       --}}
-                {{-- Opens the hidden video input when clicked.                --}}
-                {{-- ========================================================= --}}
-                <div class="flex-1 text-center py-2 m-2">
-
-                    <label
-                        for="videoInput"
-                        class="cursor-pointer mt-1 group flex items-center justify-center text-blue-400 px-2 py-2 rounded-full hover:bg-gray-800 hover:text-blue-300">
-
-                        <svg
-                            class="h-7 w-6"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-
-                            <path
-                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-
-                            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-
-                        </svg>
-
-                    </label>
-
-                </div>
 
             </div>
 
