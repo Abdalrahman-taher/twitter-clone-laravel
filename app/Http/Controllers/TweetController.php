@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Tweet;
 use Illuminate\Http\Request;
+use App\Traits\HandlesMediaUploads;
+
+
 
 class TweetController extends Controller
 {
+    use HandlesMediaUploads;
+
     public function store(Request $request)
     {
         // =====================================================
@@ -36,46 +41,11 @@ class TweetController extends Controller
         ]);
 
         // =====================================================
-        // Upload Tweet Images
-        // Save each uploaded image as a separate media record
+        // Upload Tweet Media
         // =====================================================
 
+        $this->uploadMedia($request, $tweet);
 
-        if ($request->hasFile('images')) {
-
-            foreach ($request->file('images') as $image) {
-
-                $path = $image->store('tweets/images', 'public');
-
-                $tweet->medias()->create([
-                    'collection' => 'tweet',
-                    'path' => $path,
-                    'mime_type' => $image->getMimeType(),
-                    'size' => $image->getSize(),
-                ]);
-            }
-        }
-
-
-        // =====================================================
-        // Upload Tweet Videos
-        // Save each uploaded video as a separate media record
-        // =====================================================
-
-        if ($request->hasFile('videos')) {
-
-            foreach ($request->file('videos') as $video) {
-
-                $path = $video->store('tweets/videos', 'public');
-
-                $tweet->medias()->create([
-                    'collection' => 'tweet',
-                    'path' => $path,
-                    'mime_type' => $video->getMimeType(),
-                    'size' => $video->getSize(),
-                ]);
-            }
-        }
         // =====================================================
         // Return Back
         // Go back to home page
@@ -97,9 +67,9 @@ class TweetController extends Controller
     }
 
     // =====================================================
-// Delete Tweet
-// Only the owner of the tweet can delete it.
-// =====================================================
+    // Delete Tweet
+    // Only the owner of the tweet can delete it.
+    // =====================================================
 
     public function destroy(Tweet $tweet)
     {
@@ -149,6 +119,5 @@ class TweetController extends Controller
 
         // Redirect to home page
         return redirect()->route('home');
-
     }
 }
