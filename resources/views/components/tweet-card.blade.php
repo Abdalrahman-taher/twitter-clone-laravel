@@ -244,6 +244,40 @@
                                 {{ $comment->body }}
                             </p>
 
+                            {{-- Comment Media --}}
+
+                        @if($comment->medias->count())
+
+                                <div class="mt-3 space-y-3">
+
+                                    @foreach($comment->medias as $media)
+
+                                        @if(str_starts_with($media->mime_type, 'image/'))
+
+                                            <img
+                                                src="{{ asset('storage/' . $media->path) }}"
+                                                class="rounded-2xl border border-gray-700 max-h-96 w-auto"
+                                                alt="Comment image">
+
+                                        @elseif(str_starts_with($media->mime_type, 'video/'))
+
+                                            <video
+                                                controls
+                                                class="rounded-2xl border border-gray-700 max-h-96 w-full">
+
+                                                <source
+                                                    src="{{ asset('storage/' . $media->path) }}"
+                                                    type="{{ $media->mime_type }}">
+
+                                            </video>
+
+                                        @endif
+
+                                    @endforeach
+
+                                </div>
+
+                            @endif
 
                         </div>
 
@@ -260,7 +294,9 @@
             <form
                 action="{{ route('comments.store', $tweet) }}"
                 method="POST"
-                class="mt-4 flex">
+                enctype="multipart/form-data"
+                class="mt-4">
+
 
                 @csrf
 
@@ -269,6 +305,10 @@
                     name="body"
                     placeholder="Post your reply"
                     class="flex-1 bg-gray-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
+
+                <x-media-picker
+                    imageInput="comment_images"
+                    videoInput="comment_videos" />
 
                 <button
                     type="submit"

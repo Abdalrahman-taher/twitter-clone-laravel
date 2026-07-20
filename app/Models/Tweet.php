@@ -23,6 +23,10 @@ class Tweet extends Model
         'parent_id',
 //        'image'=> 'array',
 //        'video',
+        'collection',
+        'path',
+        'mime_type',
+        'size',
     ];
 
     // Every tweet belongs to one user

@@ -10,17 +10,26 @@ trait HandlesMediaUploads
     /**
      * Upload images and videos to a tweet (or reply).
      */
-    protected function uploadMedia(Request $request, Tweet $tweet): void
+    protected function uploadMedia(
+        Request $request,
+        Tweet $tweet,
+        string $imageInput = 'images',
+        string $videoInput = 'videos',
+        string $collection = 'tweet'
+    ): void
     {
+        // =====================================================
         // Upload Images
-        if ($request->hasFile('images')) {
+        // =====================================================
 
-            foreach ($request->file('images') as $image) {
+        if ($request->hasFile($imageInput)) {
+
+            foreach ($request->file($imageInput) as $image) {
 
                 $path = $image->store('tweets/images', 'public');
 
                 $tweet->medias()->create([
-                    'collection' => 'tweet',
+                    'collection' => $collection,
                     'path' => $path,
                     'mime_type' => $image->getMimeType(),
                     'size' => $image->getSize(),
@@ -28,15 +37,18 @@ trait HandlesMediaUploads
             }
         }
 
+        // =====================================================
         // Upload Videos
-        if ($request->hasFile('videos')) {
+        // =====================================================
 
-            foreach ($request->file('videos') as $video) {
+        if ($request->hasFile($videoInput)) {
+
+            foreach ($request->file($videoInput) as $video) {
 
                 $path = $video->store('tweets/videos', 'public');
 
                 $tweet->medias()->create([
-                    'collection' => 'tweet',
+                    'collection' => $collection,
                     'path' => $path,
                     'mime_type' => $video->getMimeType(),
                     'size' => $video->getSize(),

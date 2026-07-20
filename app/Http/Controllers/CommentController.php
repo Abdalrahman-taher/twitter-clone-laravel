@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
+use App\Traits\HandlesMediaUploads;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    use HandlesMediaUploads;
+
     // =====================================================
     // Store Comment
     // Create a new reply (stored as a tweet with parent_id)
@@ -16,90 +19,54 @@ class CommentController extends Controller
     {
         // =====================================================
         // Validate Reply Data
-        // Check reply text, images and videos before saving
         // =====================================================
 
         $request->validate([
 
             // Reply text
-            'body' => 'required|max:280',
+            'body' => 'nullable|max:280',
 
             // Reply images
-            'images' => 'nullable|array',
-            'images.*' => 'image|max:2048',
+            'comment_images' => 'nullable|array',
+            'comment_images.*' => 'image|max:2048',
 
             // Reply videos
-            'videos' => 'nullable|array',
-            'videos.*' => 'mimes:mp4|max:51200',
+            'comment_videos' => 'nullable|array',
+            'comment_videos.*' => 'mimes:mp4|max:51200',
 
         ]);
 
+
+        if (
+            blank($request->body) &&
+            !$request->hasFile('comment_images') &&
+            !$request->hasFile('comment_videos')
+        ) {
+            return back()->withErrors([
+                'body' => 'Reply cannot be empty.',
+            ]);
+        }
 
         // =====================================================
         // Create Reply
-        // Store it inside tweets table using parent_id
         // =====================================================
 
         $reply = $tweet->comments()->create([
-
             'user_id' => auth()->id(),
-
             'body' => $request->body,
-
         ]);
 
-
         // =====================================================
-        // Upload Reply Images
-        // Save each image as media record
+        // Upload Reply Media
         // =====================================================
 
-        if ($request->hasFile('images')) {
-
-            foreach ($request->file('images') as $image) {
-
-                $path = $image->store('tweets/images', 'public');
-
-                $reply->medias()->create([
-
-                    'collection' => 'reply',
-
-                    'path' => $path,
-
-                    'mime_type' => $image->getMimeType(),
-
-                    'size' => $image->getSize(),
-
-                ]);
-            }
-        }
-
-
-        // =====================================================
-        // Upload Reply Videos
-        // Save each video as media record
-        // =====================================================
-
-        if ($request->hasFile('videos')) {
-
-            foreach ($request->file('videos') as $video) {
-
-                $path = $video->store('tweets/videos', 'public');
-
-                $reply->medias()->create([
-
-                    'collection' => 'reply',
-
-                    'path' => $path,
-
-                    'mime_type' => $video->getMimeType(),
-
-                    'size' => $video->getSize(),
-
-                ]);
-            }
-        }
-
+        $this->uploadMedia(
+            $request,
+            $reply,
+            'comment_images',
+            'comment_videos',
+            'reply'
+        );
 
         // =====================================================
         // Return Back
