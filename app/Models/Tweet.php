@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Retweet;
+use App\Traits\HasMedias;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use App\Traits\HasMedias;
-
 
 class Tweet extends Model
 {
-
     use HasMedias;
 
     // Allow these fields to be saved
@@ -21,32 +18,32 @@ class Tweet extends Model
         'body',
         'user_id',
         'parent_id',
-//        'image'=> 'array',
-//        'video',
         'collection',
         'path',
         'mime_type',
         'size',
     ];
 
+    // =====================================================
     // Every tweet belongs to one user
+    // =====================================================
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    // =====================================================
     // One tweet can be liked by many users
+    // =====================================================
+
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'likes');
     }
 
-
     // =====================================================
     // Check if a specific user liked this tweet
-    // Returns:
-    // true  => user liked the tweet
-    // false => user didn't like the tweet
     // =====================================================
 
     public function isLikedBy(User $user): bool
@@ -54,18 +51,32 @@ class Tweet extends Model
         return $this->likes->contains($user);
     }
 
+    // =====================================================
+    // Check if a specific user retweeted this tweet
+    // =====================================================
+
+    public function isRetweetedBy(User $user): bool
+    {
+        return Retweet::where('user_id', $user->id)
+            ->where('tweet_id', $this->id)
+            ->exists();
+    }
+
+    // =====================================================
     // Parent Tweet
+    // =====================================================
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Tweet::class, 'parent_id');
     }
 
+    // =====================================================
+    // Comments
+    // =====================================================
 
-
-// Comments
     public function comments(): HasMany
     {
         return $this->hasMany(Tweet::class, 'parent_id');
     }
-
 }

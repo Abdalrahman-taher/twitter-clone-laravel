@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\CommentController;
-
+use App\Http\Controllers\RetweetController;
 
 
 Route::middleware('auth')->group(function () {
@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/tweets/{tweet}/like', [TweetController::class, 'like'])->name('tweets.like');
+
+    Route::post('/tweets/{tweet}/retweet', [RetweetController::class, 'toggle'])->name('tweets.retweet');
 
     Route::post('/tweets/{tweet}/comments', [CommentController::class, 'store'])->name('comments.store');
 

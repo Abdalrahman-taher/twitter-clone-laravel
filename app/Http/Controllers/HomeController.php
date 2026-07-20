@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -11,21 +12,31 @@ class HomeController extends Controller
         // =====================================================
         // Get all parent tweets (newest first)
         // Exclude comments by checking parent_id is null
-        // Eager load user, media, likes and comments
         // =====================================================
 
         $tweets = Tweet::whereNull('parent_id')
+
+            // Load related models
             ->with([
                 'user',
                 'medias',
                 'likes',
                 'comments.user',
             ])
-            // Count the number of likes and comments for each tweet
-            ->withCount(
+
+            // Count likes and comments
+            ->withCount([
                 'likes',
                 'comments',
-            )
+            ])
+
+            // Count retweets from retweets table
+            ->addSelect([
+                'retweets_count' => DB::table('retweets')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('retweets.tweet_id', 'tweets.id')
+            ])
+
             ->latest()
             ->get();
 

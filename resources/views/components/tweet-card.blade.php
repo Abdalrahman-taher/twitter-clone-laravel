@@ -95,34 +95,7 @@
             {{-- Display all images and videos attached to the tweet       --}}
             {{-- ========================================================= --}}
 
-            @foreach($tweet->medias as $media)
-
-                @if(str_starts_with($media->mime_type, 'image/'))
-
-                    <img
-                        src="{{ asset('storage/' . $media->path) }}"
-                        class="mt-2 rounded-2xl border border-gray-100 dark:border-gray-700 w-full max-h-[500px] object-cover"
-                        alt="Tweet Image">
-
-                @endif
-
-                @if(str_starts_with($media->mime_type, 'video/'))
-
-                    <video
-                        controls
-                        class="mt-2 rounded-2xl border border-gray-100 dark:border-gray-700 w-full max-h-[500px]">
-
-                        <source
-                            src="{{ asset('storage/' . $media->path) }}"
-                            type="{{ $media->mime_type }}">
-
-                        Your browser does not support the video tag.
-
-                    </video>
-
-                @endif
-
-            @endforeach
+            <x-media-gallery :model="$tweet" />
 
             <p class="text-gray-500 dark:text-gray-400 text-base py-1 my-0.5">
                 {{ $tweet->created_at->format('h:i A · M d, Y') }}
@@ -130,65 +103,116 @@
 
             <div class="border-gray-200 dark:border-gray-600 border border-b-0 my-1"></div>
 
+
+
             {{-- ========================================================= --}}
             {{-- Tweet Actions                                             --}}
-            {{-- Like / Comment / Share buttons                            --}}
+            {{-- Comment / Retweet / Like / Share                          --}}
             {{-- ========================================================= --}}
 
-            <div class="text-gray-500 dark:text-gray-400 flex items-center mt-4">
+            @php
+                $liked = $tweet->isLikedBy(auth()->user());
+                $retweeted = $tweet->isRetweetedBy(auth()->user());
+            @endphp
+
+            <div class="flex items-center py-4 text-xs text-gray-400">
 
                 {{-- Comment --}}
-                <div
-                    class="flex items-center mr-8 hover:text-blue-400 transition duration-300 cursor-pointer">
+                <div class="flex-1 flex items-center hover:text-blue-400 transition duration-300">
 
                     <svg
                         viewBox="0 0 24 24"
                         fill="currentColor"
                         class="w-5 h-5 mr-2">
 
-                        <path
-                            d="M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.043-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788z"/>
+                        <path d="M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802
+                     0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403
+                     .142.225.384.347.632.347.138 0 .277-.038.402-.118
+                     .264-.168 6.473-4.14 8.088-5.506
+                     1.902-1.61 3.043-3.97 3.043-6.312
+                     v-.017c-.006-4.367-3.43-7.787-7.8-7.788z"/>
 
                     </svg>
 
-
-                    <span>
-        {{ $tweet->comments_count }}
-
-                    </span>
+                    <span>{{ $tweet->comments_count }}</span>
 
                 </div>
 
-                {{-- Like Button --}}
+
+                {{-- Retweet --}}
                 <form
-                    action="{{ route('tweets.like', $tweet) }}"
+                    action="{{ route('tweets.retweet', $tweet) }}"
                     method="POST"
-                    class="mr-8">
+                    class="flex-1">
 
                     @csrf
 
-                    @php($liked = $tweet->isLikedBy(auth()->user()))
-
                     <button
                         type="submit"
-                        class="flex items-center hover:text-red-500 transition duration-300 cursor-pointer">
-
+                        class="flex items-center hover:text-green-500 transition duration-300 {{ $retweeted ? 'text-green-500' : '' }}">
 
                         <svg
                             viewBox="0 0 24 24"
                             fill="currentColor"
-                            class="w-5 h-5 mr-2 {{ $liked ? 'text-red-500' : '' }}">
+                            class="w-5 h-5 mr-2">
 
-                            <path
-                                d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
+                            <path d="M23.77 15.67c-.292-.293-.767-.293-1.06
+                         0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85
+                         c-.414 0-.75.336-.75.75s.336.75.75.75h5.85
+                         c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22
+                         c-.293-.293-.768-.293-1.06
+                         0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22
+                         s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767
+                         0-1.06zm-10.66 3.28H7.26c-1.24
+                         0-2.25-1.01-2.25-2.25V6.46l2.22
+                         2.22c.148.147.34.22.532.22s.384-.073.53-.22
+                         c.293-.293.293-.768
+                         0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06
+                         0l-3.5 3.5c-.294.292-.294.767
+                         0 1.06s.767.293 1.06 0l2.22-2.22V16.7
+                         c0 2.068 1.683 3.75 3.75 3.75h5.85
+                         c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z"/>
 
                         </svg>
 
+                        <span>{{ $tweet->retweets_count ?? 0 }}</span>
 
-                        <span>
-                            {{ $tweet->likes_count }}
-                        </span>
+                    </button>
 
+                </form>
+
+
+                {{-- Like --}}
+                <form
+                    action="{{ route('tweets.like', $tweet) }}"
+                    method="POST"
+                    class="flex-1">
+
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="flex items-center hover:text-red-500 transition duration-300 {{ $liked ? 'text-red-500' : '' }}">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="w-5 h-5 mr-2">
+
+                            <path d="M12 21.638h-.014C9.403 21.59
+                         1.95 14.856 1.95 8.478
+                         c0-3.064 2.525-5.754 5.403-5.754
+                         2.29 0 3.83 1.58 4.646 2.73
+                         .814-1.148 2.354-2.73
+                         4.645-2.73
+                         2.88 0 5.404 2.69
+                         5.404 5.755
+                         0 6.376-7.454 13.11-10.037
+                         13.157H12z"/>
+
+                        </svg>
+
+                        <span>{{ $tweet->likes_count }}</span>
 
                     </button>
 
@@ -196,23 +220,25 @@
 
 
                 {{-- Share --}}
-                <div
-                    class="flex items-center hover:text-blue-400 transition duration-300 cursor-pointer">
-
+                <div class="flex-1 flex items-center hover:text-blue-400 transition duration-300">
 
                     <svg
                         viewBox="0 0 24 24"
                         fill="currentColor"
                         class="w-5 h-5 mr-2">
 
-                        <path
-                            d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06l5 5c.293.293.768.293 1.06 0l5-5c.294-.292.294-.767 0-1.06z"/>
+                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06
+                     0l-5 5c-.294.293-.294.768
+                     0 1.06s.767.294 1.06
+                     0l3.72-3.72V15c0 .414.336.75.75.75
+                     s.75-.336.75-.75V4.81l3.72
+                     3.72c.146.147.338.22.53.22
+                     s.384-.072.53-.22c.293-.293.293-.767
+                     0-1.06z"/>
 
                     </svg>
 
-
                 </div>
-
 
             </div>
 
@@ -223,7 +249,6 @@
             {{-- ========================================================= --}}
 
             <div class="mt-4 space-y-3">
-
 
                 @foreach($tweet->comments as $comment)
 
@@ -239,52 +264,18 @@
                     </span>
                             </p>
 
-
                             <p class="text-sm text-gray-300">
                                 {{ $comment->body }}
                             </p>
 
                             {{-- Comment Media --}}
-
-                        @if($comment->medias->count())
-
-                                <div class="mt-3 space-y-3">
-
-                                    @foreach($comment->medias as $media)
-
-                                        @if(str_starts_with($media->mime_type, 'image/'))
-
-                                            <img
-                                                src="{{ asset('storage/' . $media->path) }}"
-                                                class="rounded-2xl border border-gray-700 max-h-96 w-auto"
-                                                alt="Comment image">
-
-                                        @elseif(str_starts_with($media->mime_type, 'video/'))
-
-                                            <video
-                                                controls
-                                                class="rounded-2xl border border-gray-700 max-h-96 w-full">
-
-                                                <source
-                                                    src="{{ asset('storage/' . $media->path) }}"
-                                                    type="{{ $media->mime_type }}">
-
-                                            </video>
-
-                                        @endif
-
-                                    @endforeach
-
-                                </div>
-
-                            @endif
+                            <x-media-gallery :model="$comment" />
 
                         </div>
 
                     </div>
 
                 @endforeach
-
 
             </div>
 
