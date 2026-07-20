@@ -108,11 +108,43 @@
 
 
                                 </div>
+                                {{-- ===================================================== --}}
+                                {{-- Profile Action Button                                 --}}
+                                {{-- Show Edit button for owner                             --}}
+                                {{-- Show Follow / Unfollow for other users                 --}}
+                                {{-- ===================================================== --}}
 
-                                <a href="{{ route('profile.edit') }}"
-                                   class="mt-4 rounded-full border border-blue-400 px-4 py-2 text-sm font-bold text-blue-400 hover:bg-blue-400 hover:text-white">
-                                    Edit Profile
-                                </a>
+                                @if(auth()->id() === $user->id)
+
+                                    <a href="{{ route('profile.edit') }}"
+                                       class="mt-4 rounded-full border border-blue-400 px-4 py-2 text-sm font-bold text-blue-400 hover:bg-blue-400 hover:text-white">
+                                        Edit Profile
+                                    </a>
+
+                                @elseif($isFollowing)
+
+                                    <form method="POST" action="{{ route('users.unfollow', $user) }}">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            class="mt-4 rounded-full bg-white px-5 py-2 text-sm font-bold text-black hover:bg-gray-200">
+                                            Unfollow
+                                        </button>
+                                    </form>
+
+                                @else
+
+                                    <form method="POST" action="{{ route('users.follow', $user) }}">
+                                        @csrf
+
+                                        <button
+                                            class="mt-4 rounded-full bg-blue-500 px-5 py-2 text-sm font-bold text-white hover:bg-blue-600">
+                                            Follow
+                                        </button>
+                                    </form>
+
+                                @endif
                             </div>
 
                             <div class="mt-3 space-y-3">
@@ -166,6 +198,35 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        {{-- ===================================================== --}}
+                        {{-- Followers / Following Counts                          --}}
+                        {{-- Display profile follow statistics                      --}}
+                        {{-- ===================================================== --}}
+
+                        <div class="mt-4 flex items-center gap-6 text-sm">
+
+                            <div>
+                             <span class="font-bold text-white">
+                               {{ $user->following_count }}
+                               </span>
+
+                                <span class="text-gray-400">
+                                 Following
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="font-bold text-white">
+                                    {{ $user->followers_count }}
+                                </span>
+
+                                <span class="text-gray-400">
+                                    Followers
+                                </span>
+                            </div>
+
                         </div>
 
                         <div class="grid grid-cols-4 border-b border-gray-800 text-sm font-semibold text-gray-400">

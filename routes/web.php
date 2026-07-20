@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RetweetController;
-
+use App\Http\Controllers\FollowController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,7 +33,9 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy'])->name('tweets.destroy');
 
+    Route::post('/users/{user}/follow', [FollowController::class, 'store'])->name('users.follow');
 
+    Route::delete('/users/{user}/follow', [FollowController::class, 'destroy'])->name('users.unfollow');
 });
 
 require __DIR__.'/auth.php';

@@ -10,10 +10,23 @@ class HomeController extends Controller
     public function index()
     {
         // =====================================================
+        // Get Following Users IDs
+        // Include authenticated user to always show own tweets
+        // =====================================================
+
+        $followingIds = auth()->user()
+            ->following()
+            ->pluck('users.id')
+            ->push(auth()->id());
+
+
+        // =====================================================
         // Get normal tweets
+        // Show only tweets from followed users
         // =====================================================
 
         $tweets = Tweet::whereNull('parent_id')
+            ->whereIn('user_id', $followingIds)
             ->with([
                 'user.medias',
                 'medias',
@@ -37,26 +50,26 @@ class HomeController extends Controller
             });
 
 
-
         // =====================================================
         // Get retweets
         // =====================================================
 
-        $retweets = Retweet::with([
-            'user.medias',
-            'tweet' => function ($query) {
-                $query->withCount([
-                    'likes',
-                    'comments',
-                    'retweets',
-                ]);
-            },
-            'tweet.user.medias',
-            'tweet.medias',
-            'tweet.likes',
-            'tweet.comments.user',
-            'tweet.comments.user.medias',
-        ])
+        $retweets = Retweet::whereIn('user_id', $followingIds)
+            ->with([
+                'user.medias',
+                'tweet' => function ($query) {
+                    $query->withCount([
+                        'likes',
+                        'comments',
+                        'retweets',
+                    ]);
+                },
+                'tweet.user.medias',
+                'tweet.medias',
+                'tweet.likes',
+                'tweet.comments.user',
+                'tweet.comments.user.medias',
+            ])
             ->latest()
             ->get()
             ->map(function ($retweet) {
@@ -68,7 +81,6 @@ class HomeController extends Controller
             });
 
 
-
         // =====================================================
         // Merge tweets and retweets
         // Sort by latest activity
@@ -78,7 +90,6 @@ class HomeController extends Controller
             ->merge($retweets)
             ->sortByDesc('created_at')
             ->values();
-
 
 
         // =====================================================

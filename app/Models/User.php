@@ -12,8 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Tweet;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Traits\HasMedias;
 
 #[Fillable([
@@ -29,7 +27,6 @@ use App\Traits\HasMedias;
 ])]
 
 #[Hidden(['password', 'remember_token'])]
-
 
 class User extends Authenticatable
 {
@@ -47,22 +44,86 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-
     }
 
-    // One user can have many tweets
+    // =====================================================
+    // User Tweets Relationship
+    // One user can create many tweets
+    // =====================================================
     public function tweets(): HasMany
     {
         return $this->hasMany(Tweet::class);
     }
 
+    // =====================================================
+    // User Likes Relationship
     // One user can like many tweets
+    // =====================================================
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(Tweet::class, 'likes');
     }
 
+    // =====================================================
+    // Following Relationship
+    // Users that the current user is following
+    // =====================================================
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'followers',
+            'follower_id',
+            'following_id'
+        );
+    }
 
+    // =====================================================
+    // Followers Relationship
+    // Users that are following the current user
+    // =====================================================
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'followers',
+            'following_id',
+            'follower_id'
+        );
+    }
+
+    // =====================================================
+    // Check Following Status
+    // Determine if the current user follows another user
+    // =====================================================
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()
+            ->where('following_id', $user->id)
+            ->exists();
+    }
+
+    // =====================================================
+    // Follow User
+    // Create a follow relationship if it does not already exist
+    // =====================================================
+    public function follow(User $user): void
+    {
+        // Prevent following yourself
+        if ($this->id === $user->id) {
+            return;
+        }
+
+        // Prevent duplicate follow records
+        $this->following()->syncWithoutDetaching($user->id);
+    }
+
+    // =====================================================
+    // Unfollow User
+    // Remove the follow relationship
+    // =====================================================
+    public function unfollow(User $user): void
+    {
+        $this->following()->detach($user->id);
+    }
 }
-
-

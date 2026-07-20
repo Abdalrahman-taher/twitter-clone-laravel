@@ -19,37 +19,55 @@ class ProfileController extends Controller
     public function show(User $user): View
     {
         // =====================================================
-        // Load User Media + Tweet Media
-        // User media contains:
-        // - avatar
-        // - cover
-        //
-        // Tweet media contains:
-        // - images
-        // - videos
+        // Load User Relations
+        // Load profile media, tweet media and follow counts
         // =====================================================
 
         $user->load([
             'medias',
-            'tweets.medias',
+        ])->loadCount([
+            'followers',
+            'following',
         ]);
 
+        // =====================================================
+        // Check Follow Status
+        // Determine if the authenticated user follows this profile
+        // =====================================================
+
+        $isFollowing = false;
+
+        if (auth()->check()) {
+            $isFollowing = auth()->user()->isFollowing($user);
+        }
 
         // =====================================================
         // Get User Tweets
-        // Tweets are already loaded with their media
+        // Load tweets with media, likes, comments and retweets
         // =====================================================
 
         $tweets = $user->tweets()
+            ->with([
+                'medias',
+                'user.medias',
+                'likes',
+                'comments',
+            ])
+            ->withCount([
+                'likes',
+                'comments',
+                'retweets',
+            ])
             ->latest()
             ->get();
-
 
         return view('profile.show', [
             'user' => $user,
             'tweets' => $tweets,
+            'isFollowing' => $isFollowing,
         ]);
     }
+
     /**
      * Display the user's profile form.
      */
