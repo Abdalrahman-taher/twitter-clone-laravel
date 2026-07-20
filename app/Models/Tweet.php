@@ -42,6 +42,12 @@ class Tweet extends Model
         return $this->belongsToMany(User::class, 'likes');
     }
 
+    // One tweet can be retweeted by many users
+    public function retweets(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'retweets');
+    }
+
     // =====================================================
     // Check if a specific user liked this tweet
     // =====================================================

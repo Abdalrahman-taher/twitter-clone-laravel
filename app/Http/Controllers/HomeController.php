@@ -3,47 +3,79 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
-use Illuminate\Support\Facades\DB;
+use App\Models\Retweet;
 
 class HomeController extends Controller
 {
     public function index()
     {
         // =====================================================
-        // Get all parent tweets (newest first)
-        // Exclude comments by checking parent_id is null
+        // Get normal tweets
         // =====================================================
 
         $tweets = Tweet::whereNull('parent_id')
-
-            // Load related models
             ->with([
                 'user',
                 'medias',
                 'likes',
                 'comments.user',
             ])
-
-            // Count likes and comments
             ->withCount([
                 'likes',
                 'comments',
+                'retweets',
             ])
-
-            // Count retweets from retweets table
-            ->addSelect([
-                'retweets_count' => DB::table('retweets')
-                    ->selectRaw('count(*)')
-                    ->whereColumn('retweets.tweet_id', 'tweets.id')
-            ])
-
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($tweet) {
+
+                $tweet->type = 'tweet';
+
+                return $tweet;
+
+            });
+
+
+
+        // =====================================================
+        // Get retweets
+        // =====================================================
+
+        $retweets = Retweet::with([
+            'user',
+            'tweet.user',
+            'tweet.medias',
+            'tweet.likes',
+            'tweet.comments.user',
+        ])
+            ->latest()
+            ->get()
+            ->map(function ($retweet) {
+
+                $retweet->type = 'retweet';
+
+                return $retweet;
+
+            });
+
+
+
+        // =====================================================
+        // Merge tweets and retweets
+        // Sort by latest activity
+        // =====================================================
+
+        $feed = $tweets
+            ->merge($retweets)
+            ->sortByDesc('created_at')
+            ->values();
+
+
 
         // =====================================================
         // Return Home Page
         // =====================================================
 
-        return view('home.index', compact('tweets'));
+        return view('home.index', compact('feed'));
     }
 }

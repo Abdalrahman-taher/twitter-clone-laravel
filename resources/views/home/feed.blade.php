@@ -12,9 +12,21 @@
     {{-- Tweets Feed                                               --}}
     {{-- ========================================================= --}}
     <ul class="list-none">
-        @foreach ($tweets as $tweet)
-            <x-tweet-card :tweet="$tweet" />
+
+        @foreach ($feed as $item)
+
+            @if($item->type === 'tweet')
+
+                <x-tweet-card :tweet="$item" />
+
+            @elseif($item->type === 'retweet')
+
+                <x-retweet-card :retweet="$item" />
+
+            @endif
+
         @endforeach
+
     </ul>
 
 </div>
