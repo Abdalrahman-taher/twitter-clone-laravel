@@ -12,7 +12,7 @@
 
         <!-- Navigation -->
         <nav class="mt-5 px-2">
-            <a href="#"
+            <a href="{{ route('home') }}"
                class="group flex items-center px-2 py-2 text-base leading-6 font-semibold rounded-full bg-gray-800 text-blue-300">
                 <svg class="mr-4 h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,14 +71,43 @@
                 </svg>
                 Profile
             </a>
-            <a href="#"
-               class="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-gray-800 hover:text-blue-300">
-                <svg class="mr-4 h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     stroke="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                More
-            </a>
+            <div x-data="{ moreOpen: false }" class="relative mt-1">
+                <button
+                    type="button"
+                    class="group flex w-full items-center rounded-full px-2 py-2 text-left text-base font-medium leading-6 hover:bg-gray-800 hover:text-blue-300"
+                    x-on:click="moreOpen = ! moreOpen"
+                    x-on:click.outside="moreOpen = false">
+
+                    <svg class="mr-4 h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    More
+                </button>
+
+                <div
+                    x-cloak
+                    x-show="moreOpen"
+                    x-transition.origin.bottom.left
+                    class="absolute bottom-full left-2 z-30 mb-2 w-56 overflow-hidden rounded-xl border border-gray-700 bg-gray-900 py-1 text-sm text-white shadow-xl">
+
+                    <form
+                        method="POST"
+                        action="{{ route('logout') }}">
+
+                        @csrf
+
+                        <button
+                            type="submit"
+                            class="block w-full px-4 py-3 text-left font-semibold text-red-400 transition duration-200 hover:bg-gray-800">
+
+                            Logout
+
+                        </button>
+
+                    </form>
+                </div>
+            </div>
 
             <!-- Tweet Button -->
             <button class="bg-blue-400 hover:bg-blue-500 w-full mt-5 text-white font-bold py-2 px-4 rounded-full">
@@ -168,25 +197,6 @@
 
             </div>
 
-
-            {{-- Logout Button --}}
-
-            <form
-                method="POST"
-                action="{{ route('logout') }}"
-                class="px-4 mt-3">
-
-                @csrf
-
-                <button
-                    type="submit"
-                    class="text-white hover:text-red-500 transition duration-300">
-
-                    Logout
-
-                </button>
-
-            </form>
         </div>
     </div>
 </div>

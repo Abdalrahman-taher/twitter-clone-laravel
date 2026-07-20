@@ -11,40 +11,21 @@
 
 <form method="POST"
       action="{{ route('tweets.store') }}"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      class="border-b border-gray-800 px-4 py-3"
+      x-data="mediaComposer('images', 'videos')"
+      x-on:change="syncMedia($event)">
 
     {{-- CSRF protection (Required for every POST form) --}}
     @csrf
 
-
-    {{-- ========================================================= --}}
-    {{-- Hidden File Inputs                                        --}}
-    {{-- Clicking the image/video icons will open them instead.    --}}
-    {{-- Multiple files can now be selected.                       --}}
-    {{-- ========================================================= --}}
-
-    <input
-        type="file"
-        id="imageInput"
-        name="images[]"
-        accept="image/*"
-        multiple
-        class="hidden">
-
-    <input
-        type="file"
-        id="videoInput"
-        name="videos[]"
-        accept="video/*"
-        multiple
-        class="hidden">
     {{-- ========================================= --}}
     {{-- User Avatar + Tweet Input --}}
     {{-- ========================================= --}}
-    <div class="flex">
+    <div class="flex gap-3">
 
         {{-- User Profile Image --}}
-        <div class="m-2 w-10 py-1">
+        <div class="w-10 shrink-0 py-1">
 
             {{-- ========================================================= --}}
             {{-- Current User Avatar --}}
@@ -76,14 +57,57 @@
         </div>
 
         {{-- Tweet Text Area --}}
-        <div class="flex-1 px-2 pt-2 mt-2">
+        <div class="min-w-0 flex-1 pt-1">
 
                 <textarea
                     name="body"
-                    class="bg-transparent text-gray-400 font-medium text-lg w-full"
+                    class="w-full resize-none border-0 bg-transparent p-0 text-xl font-medium text-gray-100 placeholder-gray-500 focus:border-0 focus:ring-0"
                     rows="2"
                     cols="50"
                     placeholder="What's happening?">{{ old('body') }}</textarea>
+
+            <div
+                x-cloak
+                x-show="previews.length"
+                class="mt-3 grid overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 gap-0.5"
+                x-bind:class="previews.length === 1 ? 'grid-cols-1' : 'grid-cols-2'">
+
+                <template x-for="(preview, index) in previews" :key="preview.id">
+                    <div
+                        class="group relative min-h-0 overflow-hidden bg-gray-800"
+                        x-bind:class="previews.length === 1 ? 'aspect-[16/10]' : (previews.length === 3 && index === 0 ? 'row-span-2 aspect-auto' : 'aspect-square')">
+
+                        <template x-if="preview.type === 'image'">
+                            <img
+                                x-bind:src="preview.url"
+                                alt="Selected media preview"
+                                class="h-full w-full object-cover">
+                        </template>
+
+                        <template x-if="preview.type === 'video'">
+                            <video
+                                x-bind:src="preview.url"
+                                class="h-full w-full object-cover"
+                                muted
+                                playsinline
+                                controls>
+                            </video>
+                        </template>
+
+                        <button
+                            type="button"
+                            class="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/70 text-xl leading-none text-white transition duration-200 hover:bg-black"
+                            aria-label="Remove selected media"
+                            x-on:click="removeMedia(preview)">
+
+                            &times;
+
+                        </button>
+
+                    </div>
+                </template>
+
+            </div>
 
         </div>
 
@@ -92,33 +116,27 @@
     {{-- ========================================= --}}
     {{-- Tweet Action Buttons --}}
     {{-- ========================================= --}}
-    <div class="flex">
+    <div class="mt-2 flex items-center gap-3">
 
-        <div class="w-10"></div>
+        <div class="w-10 shrink-0"></div>
 
-        <div class="w-64 px-2">
+        <div class="flex min-w-0 flex-1 items-center justify-between border-t border-gray-800 pt-2">
 
-            <div class="flex">
-
+            <div class="flex items-center">
 
                 <x-media-picker
                     imageInput="images"
                     videoInput="videos"
                 />
 
-
             </div>
-
-        </div>
 
         {{-- ========================================= --}}
         {{-- Submit Tweet Button --}}
         {{-- ========================================= --}}
-        <div class="flex-1">
-
             <button
                 type="submit"
-                class="bg-blue-400 hover:bg-blue-500 mt-5 text-white font-bold py-2 px-8 rounded-full mr-8 float-right">
+                class="inline-flex items-center justify-center rounded-full bg-blue-500 px-6 py-2 text-sm font-bold text-white transition duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
 
                 Tweet
 

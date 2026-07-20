@@ -1,4 +1,4 @@
-<div class="flex flex-col w-full">
+<div class="flex w-[600px] flex-none flex-col">
 
     {{-- ========================================================= --}}
     {{-- Create Tweet Form                                         --}}

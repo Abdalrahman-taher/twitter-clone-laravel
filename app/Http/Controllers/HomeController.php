@@ -15,10 +15,11 @@ class HomeController extends Controller
 
         $tweets = Tweet::whereNull('parent_id')
             ->with([
-                'user',
+                'user.medias',
                 'medias',
                 'likes',
                 'comments.user',
+                'comments.user.medias',
             ])
             ->withCount([
                 'likes',
@@ -42,11 +43,19 @@ class HomeController extends Controller
         // =====================================================
 
         $retweets = Retweet::with([
-            'user',
-            'tweet.user',
+            'user.medias',
+            'tweet' => function ($query) {
+                $query->withCount([
+                    'likes',
+                    'comments',
+                    'retweets',
+                ]);
+            },
+            'tweet.user.medias',
             'tweet.medias',
             'tweet.likes',
             'tweet.comments.user',
+            'tweet.comments.user.medias',
         ])
             ->latest()
             ->get()
