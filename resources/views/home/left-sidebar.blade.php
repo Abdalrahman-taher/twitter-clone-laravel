@@ -28,7 +28,7 @@
                 </svg>
                 Explore
             </a>
-            <a href="#"
+            <a href="{{ route('notifications.index') }}"
                class="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-full hover:bg-gray-800 hover:text-blue-300">
                 <svg class="mr-4 h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                      stroke="currentColor" viewBox="0 0 24 24">
