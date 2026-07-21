@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tweet;
 use App\Models\Retweet;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -92,10 +93,37 @@ class HomeController extends Controller
             ->values();
 
 
+
+        // =====================================================
+        // Suggested Users
+        // Users that current user does not follow yet
+        // =====================================================
+
+        $suggestedUsers = User::where('id', '!=', auth()->id())
+
+            // Exclude already followed users
+            ->whereNotIn('id', function ($query) {
+
+                $query->select('following_id')
+                    ->from('followers')
+                    ->where('follower_id', auth()->id());
+
+            })
+
+            ->with('medias')
+
+            ->inRandomOrder()
+
+            ->limit(3)
+
+            ->get();
+
         // =====================================================
         // Return Home Page
         // =====================================================
 
-        return view('home.index', compact('feed'));
-    }
+        return view('home.index', compact(
+            'feed',
+            'suggestedUsers'
+        ));    }
 }

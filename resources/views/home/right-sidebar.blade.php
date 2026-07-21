@@ -136,85 +136,125 @@
                 </div>
             </div>
 
+
             <!-- Who to follow -->
-            <div class="max-w-sm rounded-lg  bg-dim-700 overflow-hidden shadow-lg m-4">
-                <div class="flex">
-                    <div class="flex-1 m-2">
-                        <h2 class="px-4 py-2 text-xl w-48 font-semibold text-white">Who to follow</h2>
-                    </div>
+            <div class="max-w-sm rounded-2xl bg-gray-900 overflow-hidden border border-gray-800">
+
+                <div class="px-5 py-4">
+                    <h2 class="text-xl font-bold text-white">
+                        Who to follow
+                    </h2>
                 </div>
 
-                <hr class="border-gray-800">
+                <div class="border-t border-gray-800">
 
-                <div class="flex flex-shrink-0">
-                    <div class="flex-1 ">
-                        <div class="flex items-center w-48">
-                            <div>
-                                <img class="inline-block h-10 w-auto rounded-full ml-4 mt-2"
-                                     src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
-                                     alt="">
-                            </div>
-                            <div class="ml-3 mt-3">
-                                <p class="text-base leading-6 font-medium text-white">
-                                    Sonali Hirave
-                                </p>
-                                <p class="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                                    @ShonaDesign
-                                </p>
-                            </div>
+                    @forelse(($suggestedUsers ?? []) as $user)
+
+                        <div class="flex items-center justify-between px-5 py-4 hover:bg-white/5 transition">
+
+                            <a href="{{ route('profile.show', $user) }}"
+                               class="flex items-center gap-3 min-w-0">
+
+                                @php
+                                    $avatar = $user->medias
+                                        ->where('collection', 'avatar')
+                                        ->first();
+                                @endphp
+
+
+                                @if($avatar)
+
+                                    <img
+                                        src="{{ asset('storage/' . $avatar->path) }}"
+                                        class="h-10 w-10 rounded-full object-cover">
+
+                                @else
+
+                                    <div
+                                        class="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-400">
+                                        <svg class="h-5 w-5"
+                                             fill="currentColor"
+                                             viewBox="0 0 24 24">
+
+                                            <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
+
+                                        </svg>
+                                    </div>
+
+                                @endif
+
+
+                                <div class="min-w-0">
+
+                                    <p class="font-bold text-white truncate">
+                                        {{ $user->name }}
+                                    </p>
+
+                                    <p class="text-sm text-gray-500 truncate">
+                                        {{ '@' . $user->username }}
+                                    </p>
+
+                                </div>
+                            </a>
+
+
+                            @if(auth()->user()->isFollowing($user))
+
+                                <form action="{{ route('users.unfollow', $user) }}" method="POST">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        class="bg-transparent hover:bg-gray-800 text-white font-semibold py-2 px-4 border border-white rounded-full">
+
+                                        Following
+
+                                    </button>
+
+                                </form>
+
+                            @else
+
+                                <form action="{{ route('users.follow', $user) }}" method="POST">
+
+                                    @csrf
+
+                                    <button
+                                        class="bg-transparent hover:bg-gray-800 text-white font-semibold py-2 px-4 border border-white rounded-full">
+
+                                        Follow
+
+                                    </button>
+
+                                </form>
+
+                            @endif
+
                         </div>
 
-                    </div>
-                    <div class="flex-1 px-4 py-2 m-2">
-                        <a href="" class=" float-right">
-                            <button
-                                class="bg-transparent hover:bg-gray-800 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded-full">
-                                Follow
-                            </button>
-                        </a>
+                    @empty
 
-                    </div>
-                </div>
-                <hr class="border-gray-800">
+                        <p class="px-5 py-4 text-sm text-gray-500">
+                            No suggestions available
+                        </p>
 
-                <div class="flex flex-shrink-0">
-                    <div class="flex-1 ">
-                        <div class="flex items-center w-48">
-                            <div>
-                                <img class="inline-block h-10 w-auto rounded-full ml-4 mt-2"
-                                     src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
-                                     alt="">
-                            </div>
-                            <div class="ml-3 mt-3">
-                                <p class="text-base leading-6 font-medium text-white">
-                                    Sonali Hirave
-                                </p>
-                                <p class="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                                    @ShonaDesign
-                                </p>
-                            </div>
-                        </div>
+                    @endforelse
 
-                    </div>
-                    <div class="flex-1 px-4 py-2 m-2">
-                        <a href="" class=" float-right">
-                            <button
-                                class="bg-transparent hover:bg-gray-800 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded-full">
-                                Follow
-                            </button>
-                        </a>
 
-                    </div>
                 </div>
 
-                <hr class="border-gray-800">
 
-                <div class="flex">
-                    <div class="flex-1 p-4">
-                        <h2 class="px-4 ml-2 w-48 font-bold text-blue-400">Show more</h2>
-                    </div>
+                <div class="border-t border-gray-800 px-5 py-4">
+
+        <span class="text-blue-400 text-sm font-semibold cursor-pointer">
+            Show more
+        </span>
+
                 </div>
+
             </div>
+
 
             <div class="flow-root m-6 inline">
                 <div class="flex-1">
