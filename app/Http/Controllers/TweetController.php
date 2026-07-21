@@ -179,4 +179,24 @@ class TweetController extends Controller
         // Redirect to home page
         return redirect()->route('home');
     }
+
+    public function show(Tweet $tweet)
+    {
+        $tweet->load([
+            'user.medias',
+            'medias',
+            'comments.user.medias',
+            'comments.medias',
+        ]);
+
+        $tweet->loadCount([
+            'likes',
+            'comments',
+            'retweets',
+        ]);
+
+        return view('tweets.show', compact('tweet'));
+    }
+
+
 }

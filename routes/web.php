@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/tweets/{tweet}/comments', [CommentController::class, 'store'])->name('comments.store');
 
+    Route::get('/tweets/{tweet}', [TweetController::class, 'show'])->name('tweets.show');
+
     Route::get('/tweets/{tweet}/edit', [TweetController::class, 'edit'])->name('tweets.edit');
 
     Route::put('/tweets/{tweet}', [TweetController::class, 'update'])->name('tweets.update');
@@ -45,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
 });
 
 require __DIR__.'/auth.php';
