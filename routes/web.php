@@ -7,6 +7,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RetweetController;
 use App\Http\Controllers\FollowController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -36,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{user}/follow', [FollowController::class, 'store'])->name('users.follow');
 
     Route::delete('/users/{user}/follow', [FollowController::class, 'destroy'])->name('users.unfollow');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 });
 
 require __DIR__.'/auth.php';

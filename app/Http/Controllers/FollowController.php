@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 
 class FollowController extends Controller
@@ -13,10 +14,29 @@ class FollowController extends Controller
     // =====================================================
     public function store(User $user): RedirectResponse
     {
-        // Follow the selected user
-        auth()->user()->follow($user);
+        // Get authenticated user
+        $authUser = auth()->user();
 
-        // Return back to the previous page
+        // Follow selected user
+        $authUser->follow($user);
+
+        // =====================================================
+        // Create Follow Notification
+        // Don't notify yourself
+        // =====================================================
+
+        if ($authUser->id !== $user->id) {
+
+            Notification::firstOrCreate([
+                'user_id'  => $user->id,
+                'actor_id' => $authUser->id,
+                'type'     => 'follow',
+                'tweet_id' => null,
+            ]);
+
+        }
+
+        // Return back
         return back();
     }
 
@@ -26,10 +46,25 @@ class FollowController extends Controller
     // =====================================================
     public function destroy(User $user): RedirectResponse
     {
-        // Unfollow the selected user
-        auth()->user()->unfollow($user);
+        // Get authenticated user
+        $authUser = auth()->user();
 
-        // Return back to the previous page
+        // Unfollow selected user
+        $authUser->unfollow($user);
+
+        // =====================================================
+        // Remove Follow Notification
+        // =====================================================
+
+        Notification::where([
+            'user_id' => $user->id,
+            'actor_id' => $authUser->id,
+            'type' => 'follow',
+        ])
+            ->whereNull('tweet_id')
+            ->delete();
+
+        // Return back
         return back();
     }
 }

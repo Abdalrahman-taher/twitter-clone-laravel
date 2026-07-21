@@ -13,6 +13,11 @@ use App\Models\Tweet;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Traits\HasMedias;
+use App\Models\Notification;
+
+
+
+
 
 #[Fillable([
     'name',
@@ -125,5 +130,15 @@ class User extends Authenticatable
     public function unfollow(User $user): void
     {
         $this->following()->detach($user->id);
+    }
+
+    // =====================================================
+    // User Notifications
+    // Notifications received by this user
+    // =====================================================
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class)
+            ->latest();
     }
 }

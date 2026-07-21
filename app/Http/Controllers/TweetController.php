@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use App\Traits\HandlesMediaUploads;
-
+use App\Models\Notification;
 
 
 class TweetController extends Controller
@@ -54,14 +54,73 @@ class TweetController extends Controller
         return redirect()->back();
     }
 
+
     // =====================================================
     // Like / Unlike Tweet
-    // If the user already liked the tweet, remove the like.
+    // Toggle like and create/remove notification
     // =====================================================
 
     public function like(Tweet $tweet)
     {
-        auth()->user()->likes()->toggle($tweet->id);
+        // Get authenticated user
+        $authUser = auth()->user();
+
+        // Toggle like relationship
+        $result = $authUser->likes()->toggle($tweet->id);
+
+
+        // =====================================================
+        // Create Like Notification
+        // =====================================================
+
+        if (
+            $tweet->user_id !== auth()->id() &&
+            auth()->user()->likes()->where('tweet_id', $tweet->id)->exists()
+        ) {
+            Notification::create([
+                'user_id' => $tweet->user_id,
+                'actor_id' => auth()->id(),
+                'tweet_id' => $tweet->id,
+                'type' => 'like',
+            ]);
+        }
+
+        // =====================================================
+        // Like Added
+        // Create notification for tweet owner
+        // =====================================================
+
+        if (!empty($result['attached'])) {
+
+            // Don't notify yourself
+            if ($tweet->user_id !== $authUser->id) {
+
+                \App\Models\Notification::firstOrCreate([
+                    'user_id' => $tweet->user_id,
+                    'actor_id' => $authUser->id,
+                    'tweet_id' => $tweet->id,
+                    'type' => 'like',
+                ]);
+
+            }
+
+        }
+
+        // =====================================================
+        // Like Removed
+        // Delete existing notification
+        // =====================================================
+
+        if (!empty($result['detached'])) {
+
+            \App\Models\Notification::where([
+                'user_id' => $tweet->user_id,
+                'actor_id' => $authUser->id,
+                'tweet_id' => $tweet->id,
+                'type' => 'like',
+            ])->delete();
+
+        }
 
         return back();
     }

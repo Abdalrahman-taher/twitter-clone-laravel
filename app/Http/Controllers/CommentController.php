@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tweet;
 use App\Traits\HandlesMediaUploads;
 use Illuminate\Http\Request;
+use App\Models\Notification;
 
 class CommentController extends Controller
 {
@@ -67,6 +68,22 @@ class CommentController extends Controller
             'comment_videos',
             'reply'
         );
+
+        // =====================================================
+        // Create Comment Notification
+        // Notify tweet owner about the new reply
+        // =====================================================
+
+        if ($tweet->user_id !== auth()->id()) {
+
+            Notification::firstOrCreate([
+                'user_id' => $tweet->user_id,
+                'actor_id' => auth()->id(),
+                'tweet_id' => $tweet->id,
+                'type' => 'comment',
+            ]);
+
+        }
 
         // =====================================================
         // Return Back
