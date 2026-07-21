@@ -8,6 +8,9 @@ use App\Http\Controllers\RetweetController;
 use App\Http\Controllers\FollowController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
+
+
 
 
 Route::middleware('auth')->group(function () {
@@ -40,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}/follow', [FollowController::class, 'destroy'])->name('users.unfollow');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 });
 
 require __DIR__.'/auth.php';

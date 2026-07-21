@@ -10,13 +10,17 @@
     $visibleImages = $images->take(4);
     $remainingImages = max($imageCount - 4, 0);
     $imageUrls = $images->map(fn ($media) => asset('storage/' . $media->path))->values();
-    $mediaRadius = $compact ? 'rounded-xl' : 'rounded-2xl';
-    $singleAspect = $compact ? 'aspect-[16/11]' : 'aspect-[16/10]';
+    $mediaRadius = $compact ? 'rounded-lg' : 'rounded-2xl';
+    $singleImageClass = $compact ? 'h-[220px] max-h-[220px] sm:h-[240px] sm:max-h-[240px]' : 'aspect-[16/10]';
+    $multiImageGridClass = $compact && $imageCount >= 2 ? 'h-[180px] max-h-[180px] sm:h-[200px] sm:max-h-[200px]' : '';
+    $multiImageRowsClass = $compact && $imageCount >= 2 ? ($imageCount === 2 ? 'grid-rows-1' : 'grid-rows-2') : '';
+    $compactTileClass = $compact ? 'h-full max-h-full' : 'aspect-square';
+    $threeImageLeadClass = $compact ? 'row-span-2 h-full max-h-full' : 'row-span-2 aspect-auto';
 @endphp
 
 @if($model->medias->count())
 
-    <div class="{{ $compact ? 'mt-2' : 'mt-3' }} space-y-3 overflow-hidden">
+    <div class="{{ $compact ? 'mt-1.5 space-y-2' : 'mt-3 space-y-3' }} overflow-hidden">
 
         @if($imageCount)
             <div
@@ -25,7 +29,7 @@
                 x-on:keydown.arrow-right.window="open && next()"
                 x-on:keydown.arrow-left.window="open && previous()">
 
-                <div class="grid overflow-hidden {{ $mediaRadius }} border border-gray-700 bg-gray-900 gap-0.5
+                <div class="grid {{ $multiImageGridClass }} {{ $multiImageRowsClass }} overflow-hidden {{ $mediaRadius }} border border-gray-700 bg-gray-900 gap-0.5
                     {{ $imageCount === 1 ? 'grid-cols-1' : 'grid-cols-2' }}">
 
                     @foreach($visibleImages as $index => $media)
@@ -34,8 +38,8 @@
                             $isSingle = $imageCount === 1;
                             $isThreeLead = $imageCount === 3 && $index === 0;
                             $tileClass = $isSingle
-                                ? $singleAspect
-                                : ($isThreeLead ? 'row-span-2 aspect-auto' : 'aspect-square');
+                                ? $singleImageClass
+                                : ($isThreeLead ? $threeImageLeadClass : $compactTileClass);
                         @endphp
 
                         <button
@@ -120,7 +124,7 @@
 
             <video
                 controls
-                class="{{ $compact ? 'max-h-64 rounded-xl' : 'max-h-96 rounded-2xl' }} w-full border border-gray-700 bg-black object-contain">
+                class="{{ $compact ? 'max-h-[240px] rounded-lg object-cover' : 'max-h-96 rounded-2xl object-contain' }} w-full border border-gray-700 bg-black">
 
                 <source
                     src="{{ asset('storage/' . $media->path) }}"
