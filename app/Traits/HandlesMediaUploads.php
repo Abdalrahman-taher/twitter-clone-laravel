@@ -2,33 +2,30 @@
 
 namespace App\Traits;
 
-use App\Models\Tweet;
 use Illuminate\Http\Request;
 
 trait HandlesMediaUploads
 {
     /**
-     * Upload images and videos to a tweet (or reply).
+     * Upload images and videos for any model using morphMany media.
      */
     protected function uploadMedia(
         Request $request,
-        Tweet $tweet,
+                $model,
         string $imageInput = 'images',
         string $videoInput = 'videos',
-        string $collection = 'tweet'
+        string $collection = 'default'
     ): void
     {
-        // =====================================================
-        // Upload Images
-        // =====================================================
 
+        // Upload Images
         if ($request->hasFile($imageInput)) {
 
             foreach ($request->file($imageInput) as $image) {
 
-                $path = $image->store('tweets/images', 'public');
+                $path = $image->store('media/images', 'public');
 
-                $tweet->medias()->create([
+                $model->medias()->create([
                     'collection' => $collection,
                     'path' => $path,
                     'mime_type' => $image->getMimeType(),
@@ -37,17 +34,15 @@ trait HandlesMediaUploads
             }
         }
 
-        // =====================================================
-        // Upload Videos
-        // =====================================================
 
+        // Upload Videos
         if ($request->hasFile($videoInput)) {
 
             foreach ($request->file($videoInput) as $video) {
 
-                $path = $video->store('tweets/videos', 'public');
+                $path = $video->store('media/videos', 'public');
 
-                $tweet->medias()->create([
+                $model->medias()->create([
                     'collection' => $collection,
                     'path' => $path,
                     'mime_type' => $video->getMimeType(),

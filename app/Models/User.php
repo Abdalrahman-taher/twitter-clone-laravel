@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Traits\HasMedias;
 use App\Models\Notification;
+use App\Models\Conversation;
+use App\Models\Message;
 
 
 
@@ -130,6 +132,24 @@ class User extends Authenticatable
     public function unfollow(User $user): void
     {
         $this->following()->detach($user->id);
+    }
+
+    // =====================================================
+// User Conversations
+// Conversations that this user participates in
+// =====================================================
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class);
+    }
+
+    // =====================================================
+    // User Messages
+    // Messages sent by this user
+    // =====================================================
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
     }
 
     // =====================================================

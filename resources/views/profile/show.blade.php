@@ -123,15 +123,28 @@
 
                                 @elseif($isFollowing)
 
-                                    <form method="POST" action="{{ route('users.unfollow', $user) }}">
-                                        @csrf
-                                        @method('DELETE')
+                                    <div class="mt-4 flex gap-3">
 
-                                        <button
-                                            class="mt-4 rounded-full bg-white px-5 py-2 text-sm font-bold text-black hover:bg-gray-200">
-                                            Unfollow
-                                        </button>
-                                    </form>
+                                        <form method="POST" action="{{ route('users.unfollow', $user) }}">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button
+                                                class="rounded-full bg-white px-5 py-2 text-sm font-bold text-black hover:bg-gray-200">
+                                                Unfollow
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" action="{{ route('messages.store', $user) }}">
+                                            @csrf
+
+                                            <button
+                                                class="rounded-full border border-gray-500 px-5 py-2 text-sm font-bold text-white hover:bg-gray-800">
+                                                Message
+                                            </button>
+                                        </form>
+
+                                    </div>
 
                                 @else
 
@@ -145,6 +158,7 @@
                                     </form>
 
                                 @endif
+
                             </div>
 
                             <div class="mt-3 space-y-3">

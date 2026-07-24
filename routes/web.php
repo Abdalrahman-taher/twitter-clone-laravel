@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 
 
 
@@ -58,6 +60,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
 
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+
+    Route::post('/messages/{user}', [MessageController::class, 'store'])->name('messages.store');
+
+    Route::get('/messages/{conversation}', [MessageController::class, 'show'])->name('messages.show');
+
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'send'])->name('messages.send');
 
 });
 

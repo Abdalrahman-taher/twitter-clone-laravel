@@ -65,6 +65,78 @@ Alpine.data('mediaComposer', (imageInputId, videoInputId) => ({
     },
 }));
 
+Alpine.data('messageComposer', (imageInputId, videoInputId) => ({
+    body: '',
+    previews: [],
+
+    get canSubmit() {
+        return this.body.trim().length > 0 || this.previews.length > 0;
+    },
+
+    syncMedia(event) {
+        if (!event.target.matches('input[type="file"]')) {
+            return;
+        }
+
+        this.rebuildPreviews();
+    },
+
+    rebuildPreviews() {
+        this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+        this.previews = [];
+
+        this.addFilesFromInput(imageInputId, 'image');
+        this.addFilesFromInput(videoInputId, 'video');
+    },
+
+    addFilesFromInput(inputId, type) {
+        const input = document.getElementById(inputId);
+
+        if (!input || !input.files) {
+            return;
+        }
+
+        Array.from(input.files).forEach((file, index) => {
+            this.previews.push({
+                id: `${inputId}-${index}-${file.name}-${file.lastModified}`,
+                inputId,
+                index,
+                type,
+                url: URL.createObjectURL(file),
+            });
+        });
+    },
+
+    removeMedia(preview) {
+        const input = document.getElementById(preview.inputId);
+
+        if (!input || !input.files) {
+            return;
+        }
+
+        const transfer = new DataTransfer();
+
+        Array.from(input.files).forEach((file, index) => {
+            if (index !== preview.index) {
+                transfer.items.add(file);
+            }
+        });
+
+        input.files = transfer.files;
+        this.rebuildPreviews();
+    },
+
+    resizeMessageInput(event) {
+        const input = event.target;
+        input.style.height = 'auto';
+        input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
+    },
+
+    destroy() {
+        this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+    },
+}));
+
 Alpine.data('mediaGallery', (images) => ({
     images,
     open: false,
