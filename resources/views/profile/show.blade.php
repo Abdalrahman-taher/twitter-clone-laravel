@@ -229,116 +229,64 @@
 
                         </div>
 
-                        <div class="grid grid-cols-4 border-b border-gray-800 text-sm font-semibold text-gray-400">
-                            <div class="border-b-4 border-blue-400 py-4 text-center text-white">Posts</div>
-                            <div class="py-4 text-center hover:bg-gray-800">Replies</div>
-                            <div class="py-4 text-center hover:bg-gray-800">Media</div>
-                            <div class="py-4 text-center hover:bg-gray-800">Likes</div>
+                        <div class="grid grid-cols-4 border-b border-gray-800 text-sm font-semibold">
+
+                            <a href="{{ route('profile.show', [$user, 'tab' => 'posts']) }}"
+                               class="py-4 text-center transition
+                                 {{ $tab == 'posts' ? 'border-b-4 border-blue-400 text-white' : 'text-gray-400 hover:bg-gray-800' }}">
+                                Posts
+                            </a>
+
+                            <a href="{{ route('profile.show', [$user, 'tab' => 'replies']) }}"
+                               class="py-4 text-center transition
+                              {{ $tab == 'replies' ? 'border-b-4 border-blue-400 text-white' : 'text-gray-400 hover:bg-gray-800' }}">
+
+                                Replies
+
+                            </a>
+
+                            <a href="{{ route('profile.show', [$user, 'tab' => 'media']) }}"
+                               class="py-4 text-center transition
+                                {{ $tab == 'media' ? 'border-b-4 border-blue-400 text-white' : 'text-gray-400 hover:bg-gray-800' }}">
+
+                                Media
+
+                            </a>
+
+                            <a href="{{ route('profile.show', [$user, 'tab' => 'likes']) }}"
+                               class="py-4 text-center transition
+                                {{ $tab == 'likes' ? 'border-b-4 border-blue-400 text-white' : 'text-gray-400 hover:bg-gray-800' }}">
+
+                                Likes
+
+                            </a>
                         </div>
 
                         <div>
+
+
                             @if($tweets->count())
+
                                 <ul class="list-none">
+
                                     @foreach($tweets as $tweet)
-                                        <li>
-                                            <article
-                                                class="border-b border-gray-800 hover:bg-gray-800 transition duration-300 ease-in-out">
-                                                <div class="flex gap-3 p-4 pb-0">
-                                                    <div class="shrink-0">
-                                                        {{-- ========================================================= --}}
-                                                        {{-- Tweet Author Avatar                                       --}}
-                                                        {{-- Get avatar image from media collection instead of users --}}
-                                                        {{-- ========================================================= --}}
 
-                                                        @php
-                                                            // Get user's avatar from media table
-                                                            $avatar = $user->medias
-                                                                ->where('collection', 'avatar')
-                                                                ->first();
-                                                        @endphp
+                                        <x-tweet-card :tweet="$tweet"/>
 
-
-                                                        @if($avatar)
-
-                                                            {{-- Display avatar from media path --}}
-                                                            <img
-                                                                class="h-10 w-10 rounded-full object-cover"
-                                                                src="{{ asset('storage/' . $avatar->path) }}"
-                                                                alt="{{ $user->name }}">
-
-                                                        @else
-                                                            <div
-                                                                class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-gray-400">
-                                                                <svg class="h-6 w-6" fill="currentColor"
-                                                                     viewBox="0 0 24 24">
-                                                                    <path
-                                                                        d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"></path>
-                                                                </svg>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-
-                                                    <div>
-                                                        <p class="text-base font-medium text-white">
-                                                            {{ $user->name }}
-                                                            <span class="text-sm font-medium text-gray-400">
-                                                                        {{ $tweet->created_at->diffForHumans() }}
-                                                                    </span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="pl-16 pr-4 pb-4">
-                                                    <p class="text-base font-medium text-white">
-                                                        {{ $tweet->body }}
-                                                    </p>
-
-                                                    {{-- ========================================================= --}}
-                                                    {{-- Tweet Media                                               --}}
-                                                    {{-- Get images and videos from media table                   --}}
-                                                    {{-- ========================================================= --}}
-
-                                                    @foreach($tweet->medias as $media)
-
-                                                        {{-- Display images --}}
-                                                        @if(str_starts_with($media->mime_type, 'image'))
-
-                                                            <img
-                                                                src="{{ asset('storage/' . $media->path) }}"
-                                                                class="mt-3 w-full max-h-[500px] rounded-2xl border border-gray-700 object-cover"
-                                                                alt="Tweet Image">
-
-                                                        @endif
-
-
-                                                        {{-- Display videos --}}
-                                                        @if(str_starts_with($media->mime_type, 'video'))
-
-                                                            <video
-                                                                controls
-                                                                class="mt-3 w-full max-h-[500px] rounded-2xl border border-gray-700">
-
-                                                                <source
-                                                                    src="{{ asset('storage/' . $media->path) }}"
-                                                                    type="{{ $media->mime_type }}">
-
-                                                                Your browser does not support the video tag.
-
-                                                            </video>
-
-                                                        @endif
-
-                                                    @endforeach
-                                                </div>
-                                            </article>
-                                        </li>
                                     @endforeach
+
                                 </ul>
+
                             @else
+
                                 <div class="px-4 py-10 text-center text-gray-400">
-                                    No tweets yet.
+
+                                    No {{ $tab }} yet.
+
                                 </div>
+
                             @endif
+
                         </div>
                     </div>
                 </div>

@@ -18,6 +18,9 @@ class ProfileController extends Controller
      */
     public function show(User $user): View
     {
+
+        $tab = request('tab', 'posts');
+
         // =====================================================
         // Load User Relations
         // Load profile media, tweet media and follow counts
@@ -46,25 +49,61 @@ class ProfileController extends Controller
         // Load tweets with media, likes, comments and retweets
         // =====================================================
 
-        $tweets = $user->tweets()
+        $query = $user->tweets()
             ->with([
                 'medias',
                 'user.medias',
                 'likes',
-                'comments',
+                'comments.user.medias',
             ])
             ->withCount([
                 'likes',
                 'comments',
                 'retweets',
             ])
-            ->latest()
-            ->get();
+            ->latest();
+
+        switch ($tab) {
+
+            case 'replies':
+                $query->whereNotNull('parent_id');
+                break;
+
+            case 'media':
+                $query->whereHas('medias');
+                break;
+
+            case 'likes':
+
+                $query = $user->likes()
+                    ->with([
+                        'medias',
+                        'user.medias',
+                        'likes',
+                        'comments.user.medias',
+                    ])
+                    ->withCount([
+                        'likes',
+                        'comments',
+                        'retweets',
+                    ])
+                    ->latest();
+
+                break;
+
+            default:
+                $query->whereNull('parent_id');
+                break;
+        }
+
+        $tweets = $query->get();
+
 
         return view('profile.show', [
             'user' => $user,
             'tweets' => $tweets,
             'isFollowing' => $isFollowing,
+            'tab' => $tab,
         ]);
     }
 
