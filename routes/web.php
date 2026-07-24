@@ -9,7 +9,7 @@ use App\Http\Controllers\FollowController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
-
+use App\Http\Controllers\BookmarkController;
 
 
 
@@ -53,6 +53,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
+    Route::post('/tweets/{tweet}/bookmark', [BookmarkController::class, 'toggle'])->name('tweets.bookmark');
+
+    Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+
 
 });
 

@@ -163,6 +163,7 @@ $avatarClass = $nested
                         @php
                             $liked = $tweet->isLikedBy(auth()->user());
                             $retweeted = $tweet->isRetweetedBy(auth()->user());
+                            $bookmarked = $tweet->isBookmarkedBy(auth()->user());
                         @endphp
 
                         <div
@@ -250,6 +251,35 @@ $avatarClass = $nested
                             </span>
 
                                     <span class="tabular-nums">{{ $tweet->likes_count }}</span>
+
+                                </button>
+
+                            </form>
+
+                            {{-- Bookmark --}}
+                            <form
+                                action="{{ route('tweets.bookmark', $tweet) }}"
+                                method="POST"
+                                class="shrink-0">
+
+                                @csrf
+
+                                <button
+                                    type="submit"
+                                    class="inline-flex min-w-0 items-center gap-2 rounded-full pr-2 transition duration-200 hover:text-blue-500 sm:min-w-[72px] {{ $bookmarked ? 'text-blue-500' : '' }}">
+
+                                 <span
+                                     class="inline-flex h-8 w-8 items-center justify-center rounded-full transition duration-200 hover:bg-blue-500/10">
+
+                                      <svg
+                                          viewBox="0 0 24 24"
+                                          fill="currentColor"
+                                          class="h-5 w-5">
+
+                                          <path d="M6 3c-1.1 0-2 .9-2 2v16l8-5.5 8 5.5V5c0-1.1-.9-2-2-2H6z"/>
+                                      </svg>
+
+                                 </span>
 
                                 </button>
 

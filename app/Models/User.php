@@ -141,4 +141,16 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class)
             ->latest();
     }
+
+
+    // =====================================================
+    // User Bookmarks Relationship
+    // One user can bookmark many tweets
+    // =====================================================
+
+    public function bookmarks(): BelongsToMany
+    {
+        return $this->belongsToMany(Tweet::class, 'bookmarks');
+    }
+
 }

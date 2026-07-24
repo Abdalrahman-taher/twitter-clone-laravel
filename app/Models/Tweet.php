@@ -69,6 +69,15 @@ class Tweet extends Model
     }
 
     // =====================================================
+    // Check if a specific user bookmarked this tweet
+    // =====================================================
+
+    public function isBookmarkedBy(User $user): bool
+    {
+        return $this->bookmarks->contains($user);
+    }
+
+    // =====================================================
     // Parent Tweet
     // =====================================================
 
@@ -84,5 +93,15 @@ class Tweet extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Tweet::class, 'parent_id');
+    }
+
+    // =====================================================
+    // Tweet Bookmarks Relationship
+    // One tweet can be bookmarked by many users
+    // =====================================================
+
+    public function bookmarks(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'bookmarks');
     }
 }
