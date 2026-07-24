@@ -207,25 +207,32 @@
 
                         <div class="mt-4 flex items-center gap-6 text-sm">
 
-                            <div>
-                             <span class="font-bold text-white">
-                               {{ $user->following_count }}
-                               </span>
 
-                                <span class="text-gray-400">
-                                 Following
-                                </span>
-                            </div>
+                            <a href="{{ route('profile.following', $user) }}"
+                               class="hover:underline">
 
-                            <div>
                                 <span class="font-bold text-white">
-                                    {{ $user->followers_count }}
+                                    {{ $user->following_count }}
                                 </span>
 
                                 <span class="text-gray-400">
-                                    Followers
+                                    Following
                                 </span>
-                            </div>
+                            </a>
+
+
+                            <a href="{{ route('profile.followers', $user) }}"
+                               class="hover:underline">
+
+                                <span class="font-bold text-white">
+                                   {{ $user->followers_count }}
+                                 </span>
+
+                                <span class="text-gray-400">
+                                      Followers
+                                </span>
+
+                            </a>
 
                         </div>
 

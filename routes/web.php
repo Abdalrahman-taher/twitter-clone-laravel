@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/users/{user}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
+
+    Route::get('/users/{user}/following', [ProfileController::class, 'following'])->name('profile.following');
+
     Route::post('/tweets/{tweet}/like', [TweetController::class, 'like'])->name('tweets.like');
 
     Route::post('/tweets/{tweet}/retweet', [RetweetController::class, 'toggle'])->name('tweets.retweet');

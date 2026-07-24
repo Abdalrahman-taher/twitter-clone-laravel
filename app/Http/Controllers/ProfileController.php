@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use App\Models\Media;
 
 class ProfileController extends Controller
 {
@@ -104,6 +103,41 @@ class ProfileController extends Controller
             'tweets' => $tweets,
             'isFollowing' => $isFollowing,
             'tab' => $tab,
+        ]);
+    }
+
+
+    // =====================================================
+    // User Followers
+    // =====================================================
+
+    public function followers(User $user): View
+    {
+        $users = $user->followers()
+            ->with('medias')
+            ->get();
+
+        return view('profile.follow-list', [
+            'profileUser' => $user,
+            'users' => $users,
+            'title' => 'Followers',
+        ]);
+    }
+
+    // =====================================================
+    // User Following
+    // =====================================================
+
+    public function following(User $user): View
+    {
+        $users = $user->following()
+            ->with('medias')
+            ->get();
+
+        return view('profile.follow-list', [
+            'profileUser' => $user,
+            'users' => $users,
+            'title' => 'Following',
         ]);
     }
 
