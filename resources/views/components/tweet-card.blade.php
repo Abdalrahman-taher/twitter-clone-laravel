@@ -383,6 +383,29 @@ $avatarClass = $nested
                                                 {{ $comment->body }}
                                             </p>
 
+                                            @if(auth()->id() === $comment->user_id)
+
+                                                <form
+                                                    action="{{ route('comments.destroy', $comment) }}"
+                                                    method="POST"
+                                                    class="mt-2">
+
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button
+                                                        type="submit"
+                                                        onclick="return confirm('Delete this comment?')"
+                                                        class="text-xs text-red-500 transition hover:text-red-400">
+
+                                                        Delete
+
+                                                    </button>
+
+                                                </form>
+
+                                            @endif
+
                                             {{-- Comment Media --}}
                                             <x-media-gallery :model="$comment" :compact="true"/>
                                         </div>

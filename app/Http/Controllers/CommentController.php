@@ -18,6 +18,7 @@ class CommentController extends Controller
 
     public function store(Request $request, Tweet $tweet)
     {
+
         // =====================================================
         // Validate Reply Data
         // =====================================================
@@ -91,4 +92,30 @@ class CommentController extends Controller
 
         return back();
     }
+
+    // =====================================================
+    // Delete Comment
+    // =====================================================
+
+    public function destroy(Tweet $comment)
+    {
+        // Make sure this tweet is actually a comment
+        if (is_null($comment->parent_id)) {
+            abort(404);
+        }
+
+        // Only owner can delete
+        if ($comment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Delete attached media
+        $comment->medias()->delete();
+
+        // Delete comment
+        $comment->delete();
+
+        return back();
+    }
 }
+

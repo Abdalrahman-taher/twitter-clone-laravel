@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/tweets/{tweet}/comments', [CommentController::class, 'store'])->name('comments.store');
 
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
     Route::get('/tweets/{tweet}', [TweetController::class, 'show'])->name('tweets.show');
 
     Route::get('/tweets/{tweet}/edit', [TweetController::class, 'edit'])->name('tweets.edit');
