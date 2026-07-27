@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Tweet;
 use App\Traits\HandlesMediaUploads;
 use Illuminate\Http\Request;
@@ -16,28 +17,8 @@ class CommentController extends Controller
     // Create a new reply (stored as a tweet with parent_id)
     // =====================================================
 
-    public function store(Request $request, Tweet $tweet)
+    public function store(StoreCommentRequest $request, Tweet $tweet)
     {
-
-        // =====================================================
-        // Validate Reply Data
-        // =====================================================
-
-        $request->validate([
-
-            // Reply text
-            'body' => 'nullable|max:280',
-
-            // Reply images
-            'comment_images' => 'nullable|array',
-            'comment_images.*' => 'image|max:2048',
-
-            // Reply videos
-            'comment_videos' => 'nullable|array',
-            'comment_videos.*' => 'mimes:mp4|max:51200',
-
-        ]);
-
 
         if (
             blank($request->body) &&
