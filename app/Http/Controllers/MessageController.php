@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMessageRequest;
 use App\Models\User;
 use App\Models\Conversation;
-use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Traits\HandlesMediaUploads;
 
@@ -91,25 +91,13 @@ class MessageController extends Controller
     // Store a new message inside conversation
     // =====================================================
 
-    public function send(Request $request, Conversation $conversation)
+    public function send(StoreMessageRequest $request, Conversation $conversation)
     {
         abort_unless(
             $conversation->users->contains(auth()->id()),
             403
         );
 
-
-        $request->validate([
-
-            'body' => 'nullable|string|max:5000',
-
-            'message_images' => 'nullable|array',
-            'message_images.*' => 'image|max:2048',
-
-            'message_videos' => 'nullable|array',
-            'message_videos.*' => 'mimes:mp4|max:51200',
-
-        ]);
 
         if (
             empty($request->body) &&
