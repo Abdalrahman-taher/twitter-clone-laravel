@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateTweetRequest;
 use App\Http\Requests\StoreTweetRequest;
 use App\Models\Notification;
 use App\Models\Tweet;
@@ -105,15 +106,11 @@ class TweetController extends Controller
         return view('tweets.edit-tweet', compact('tweet'));
     }
 
-    public function update(Request $request, Tweet $tweet)
+    public function update(UpdateTweetRequest $request, Tweet $tweet)
     {
         if ($tweet->user_id !== auth()->id()) {
             abort(403);
         }
-
-        $request->validate([
-            'body' => 'required|max:280',
-        ]);
 
         $tweet->update([
             'body' => $request->body,
