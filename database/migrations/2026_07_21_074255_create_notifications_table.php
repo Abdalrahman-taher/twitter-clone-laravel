@@ -40,13 +40,28 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
+            [
+//                'ID'=>'',
+//                'CONTENT'=>[
+//                'MESSAGE'=> '',
+//                'TARGET'=> 'url',
+//                ],
+//                'USER_ID'=>'',
+//                'READIED_AT' => '',
+//                'CREATED_AT' => '',
+//            ]
+//                //FOREACH(...... AS $NOTI..)
+//            <a href="{{ $NOTI->CONTENT->TARGET }}">
+//                {{ $NOTI->CONTENT->MESSAGE }}
+//            <span>{{created_at}}</span>
+//            </a>
 
             // =====================================================
             // Notification type
             // follow | like | comment | retweet
             // =====================================================
 
-            $table->string('type');
+            $table->string('type')];
 
             // =====================================================
             // Read status
