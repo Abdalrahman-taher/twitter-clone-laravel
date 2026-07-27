@@ -126,6 +126,8 @@ class TweetController extends Controller
             'medias',
             'comments.user.medias',
             'comments.medias',
+            'quoteTweet.user.medias',
+            'quoteTweet.medias',
         ]);
 
         $tweet->loadCount([

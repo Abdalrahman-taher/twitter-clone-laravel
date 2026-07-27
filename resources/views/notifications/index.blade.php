@@ -106,6 +106,15 @@
                                 retweeted your tweet.
                             </p>
 
+                        @elseif($notification->type === 'quote')
+
+                            <p class="text-white">
+                                    <span class="font-bold">
+                                        {{ $notification->actor->name }}
+                                    </span>
+                                quoted your tweet.
+                            </p>
+
                         @endif
 
 

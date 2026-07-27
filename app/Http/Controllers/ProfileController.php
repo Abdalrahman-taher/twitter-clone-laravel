@@ -54,6 +54,8 @@ class ProfileController extends Controller
                 'user.medias',
                 'likes',
                 'comments.user.medias',
+                'quoteTweet.user.medias',
+                'quoteTweet.medias',
             ])
             ->withCount([
                 'likes',
@@ -80,6 +82,8 @@ class ProfileController extends Controller
                         'user.medias',
                         'likes',
                         'comments.user.medias',
+                        'quoteTweet.user.medias',
+                        'quoteTweet.medias',
                     ])
                     ->withCount([
                         'likes',

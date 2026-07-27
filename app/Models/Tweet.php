@@ -18,12 +18,12 @@ class Tweet extends Model
         'body',
         'user_id',
         'parent_id',
+        'quote_tweet_id',
         'collection',
         'path',
         'mime_type',
         'size',
     ];
-
     // =====================================================
     // Every tweet belongs to one user
     // =====================================================
@@ -96,10 +96,39 @@ class Tweet extends Model
     }
 
     // =====================================================
+    // Quoted Tweet
+    // The original tweet that this tweet is quoting
+    // =====================================================
+
+    public function quoteTweet(): BelongsTo
+    {
+        return $this->belongsTo(Tweet::class, 'quote_tweet_id');
+    }
+
+    // =====================================================
+    // Quoted By
+    // All tweets that quoted this tweet
+    // =====================================================
+
+    public function quotedBy(): HasMany
+    {
+        return $this->hasMany(Tweet::class, 'quote_tweet_id');
+    }
+
+    // =====================================================
+    // Check if this tweet is a quote tweet
+    // =====================================================
+
+    public function isQuote(): bool
+    {
+        return ! is_null($this->quote_tweet_id);
+    }
+
+
+    // =====================================================
     // Tweet Bookmarks Relationship
     // One tweet can be bookmarked by many users
     // =====================================================
-
     public function bookmarks(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'bookmarks');

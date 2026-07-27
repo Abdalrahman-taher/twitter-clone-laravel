@@ -49,7 +49,9 @@ class SearchController extends Controller
                 'user.medias',
                 'medias',
                 'likes',
-                'comments',
+                'comments.user.medias',
+                'quoteTweet.user.medias',
+                'quoteTweet.medias',
             ])
             ->withCount([
                 'likes',

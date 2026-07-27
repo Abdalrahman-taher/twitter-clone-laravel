@@ -11,6 +11,7 @@ class Retweet extends Model
     protected $fillable = [
         'user_id',
         'tweet_id',
+        'body',
     ];
 
     // =====================================================

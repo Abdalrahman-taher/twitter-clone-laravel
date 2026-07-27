@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRetweetRequest;
 use App\Models\Retweet;
 use App\Models\Tweet;
 use App\Models\Notification;
@@ -50,4 +51,37 @@ class RetweetController extends Controller
 
         return back();
     }
+
+    // =====================================================
+    // Quote Tweet
+    // Create a new tweet that quotes another tweet
+    // =====================================================
+
+    public function store(StoreRetweetRequest $request, Tweet $tweet)
+    {
+        // Create the quote tweet
+        $quoteTweet = Tweet::create([
+            'user_id' => auth()->id(),
+            'body' => $request->body,
+            'quote_tweet_id' => $tweet->id,
+        ]);
+
+        // =====================================================
+        // Create Quote Tweet Notification
+        // =====================================================
+
+        if ($tweet->user_id !== auth()->id()) {
+
+            Notification::firstOrCreate([
+                'user_id' => $tweet->user_id,
+                'actor_id' => auth()->id(),
+                'tweet_id' => $tweet->id,
+                'type' => 'quote',
+            ]);
+
+        }
+
+        return redirect()->route('tweets.show', $quoteTweet);
+    }
+
 }

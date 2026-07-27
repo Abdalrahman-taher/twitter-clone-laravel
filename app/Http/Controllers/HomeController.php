@@ -29,11 +29,22 @@ class HomeController extends Controller
         $tweets = Tweet::whereNull('parent_id')
             ->whereIn('user_id', $followingIds)
             ->with([
+                // Tweet owner
                 'user.medias',
+
+                // Tweet media
                 'medias',
+
+                // Likes
                 'likes',
+
+                // Comments
                 'comments.user',
                 'comments.user.medias',
+
+                // Quote Tweet
+                'quoteTweet.user.medias',
+                'quoteTweet.medias',
             ])
             ->withCount([
                 'likes',
@@ -49,7 +60,6 @@ class HomeController extends Controller
                 return $tweet;
 
             });
-
 
         // =====================================================
         // Get retweets
@@ -70,6 +80,9 @@ class HomeController extends Controller
                 'tweet.likes',
                 'tweet.comments.user',
                 'tweet.comments.user.medias',
+
+                'tweet.quoteTweet.user.medias',
+                'tweet.quoteTweet.medias',
             ])
             ->latest()
             ->get()

@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/tweets/{tweet}/retweet', [RetweetController::class, 'toggle'])->name('tweets.retweet');
 
+    Route::post('/tweets/{tweet}/quote', [RetweetController::class, 'store'])->name('tweets.quote');
+
     Route::post('/tweets/{tweet}/comments', [CommentController::class, 'store'])->name('comments.store');
 
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');

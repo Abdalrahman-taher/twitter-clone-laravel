@@ -19,6 +19,8 @@ class BookmarkController extends Controller
                 'medias',
                 'likes',
                 'comments.user.medias',
+                'quoteTweet.user.medias',
+                'quoteTweet.medias',
             ])
             ->withCount([
                 'likes',
