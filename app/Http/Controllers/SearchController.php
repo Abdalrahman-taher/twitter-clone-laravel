@@ -56,8 +56,8 @@ class SearchController extends Controller
             ->withCount([
                 'likes',
                 'comments',
-                'retweets',
             ])
+            ->withRetweetCount()
             ->latest()
             ->get();
 

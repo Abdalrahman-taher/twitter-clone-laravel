@@ -15,21 +15,30 @@ class RetweetController extends Controller
     // =====================================================
     public function toggle(Tweet $tweet)
     {
-        // Check if the user already retweeted this tweet
-        $retweet = Retweet::where('user_id', auth()->id())
-            ->where('tweet_id', $tweet->id)
-            ->first();
+        $userId = auth()->id();
+        $alreadyInteracted = $tweet->retweets()
+            ->where('user_id', $userId)
+            ->exists()
+            || $tweet->quotedBy()
+                ->where('user_id', $userId)
+                ->exists();
 
-        // Undo retweet
-        if ($retweet) {
+        // Undo retweet or quote tweet
+        if ($alreadyInteracted) {
 
-            $retweet->delete();
+            $tweet->retweets()
+                ->where('user_id', $userId)
+                ->detach();
+
+            $tweet->quotedBy()
+                ->where('user_id', $userId)
+                ->delete();
 
         } else {
 
             // Create new retweet
             Retweet::create([
-                'user_id' => auth()->id(),
+                'user_id' => $userId,
                 'tweet_id' => $tweet->id,
             ]);
 
@@ -37,11 +46,11 @@ class RetweetController extends Controller
             // Create Retweet Notification
             // =====================================================
 
-            if ($tweet->user_id !== auth()->id()) {
+            if ($tweet->user_id !== $userId) {
 
                 Notification::create([
                     'user_id' => $tweet->user_id,
-                    'actor_id' => auth()->id(),
+                    'actor_id' => $userId,
                     'tweet_id' => $tweet->id,
                     'type' => 'retweet',
                 ]);
@@ -59,9 +68,22 @@ class RetweetController extends Controller
 
     public function store(StoreRetweetRequest $request, Tweet $tweet)
     {
+        $userId = auth()->id();
+
+        $alreadyInteracted = $tweet->retweets()
+            ->where('user_id', $userId)
+            ->exists()
+            || $tweet->quotedBy()
+                ->where('user_id', $userId)
+                ->exists();
+
+        if ($alreadyInteracted) {
+            return back();
+        }
+
         // Create the quote tweet
         $quoteTweet = Tweet::create([
-            'user_id' => auth()->id(),
+            'user_id' => $userId,
             'body' => $request->body,
             'quote_tweet_id' => $tweet->id,
         ]);
@@ -70,11 +92,11 @@ class RetweetController extends Controller
         // Create Quote Tweet Notification
         // =====================================================
 
-        if ($tweet->user_id !== auth()->id()) {
+        if ($tweet->user_id !== $userId) {
 
             Notification::firstOrCreate([
                 'user_id' => $tweet->user_id,
-                'actor_id' => auth()->id(),
+                'actor_id' => $userId,
                 'tweet_id' => $tweet->id,
                 'type' => 'quote',
             ]);

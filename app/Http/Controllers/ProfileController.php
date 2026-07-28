@@ -54,14 +54,14 @@ class ProfileController extends Controller
                 'user.medias',
                 'likes',
                 'comments.user.medias',
-                'quoteTweet.user.medias',
-                'quoteTweet.medias',
+            'quoteTweet.user.medias',
+            'quoteTweet.medias',
             ])
             ->withCount([
                 'likes',
                 'comments',
-                'retweets',
             ])
+            ->withRetweetCount()
             ->latest();
 
         switch ($tab) {
@@ -88,8 +88,8 @@ class ProfileController extends Controller
                     ->withCount([
                         'likes',
                         'comments',
-                        'retweets',
                     ])
+                    ->withRetweetCount()
                     ->latest();
 
                 break;

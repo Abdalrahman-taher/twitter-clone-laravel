@@ -49,8 +49,8 @@ class HomeController extends Controller
             ->withCount([
                 'likes',
                 'comments',
-                'retweets',
             ])
+            ->withRetweetCount()
             ->latest()
             ->get()
             ->map(function ($tweet) {
@@ -68,13 +68,13 @@ class HomeController extends Controller
         $retweets = Retweet::whereIn('user_id', $followingIds)
             ->with([
                 'user.medias',
-                'tweet' => function ($query) {
-                    $query->withCount([
-                        'likes',
-                        'comments',
-                        'retweets',
-                    ]);
-                },
+            'tweet' => function ($query) {
+                $query->withCount([
+                    'likes',
+                    'comments',
+                ]);
+                $query->withRetweetCount();
+            },
                 'tweet.user.medias',
                 'tweet.medias',
                 'tweet.likes',

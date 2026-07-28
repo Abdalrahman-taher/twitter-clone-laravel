@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Tweet extends Model
 {
@@ -48,6 +49,25 @@ class Tweet extends Model
         return $this->belongsToMany(User::class, 'retweets');
     }
 
+    // One tweet can be quoted by many tweets
+    public function quotedBy(): HasMany
+    {
+        return $this->hasMany(Tweet::class, 'quote_tweet_id');
+    }
+
+    // =====================================================
+    // Retweet activity count source
+    // Includes both direct retweets and quote tweets
+    // =====================================================
+
+    public function scopeWithRetweetCount(Builder $query): Builder
+    {
+        return $query->withCount([
+            'retweets',
+            'quotedBy as quote_tweets_count',
+        ]);
+    }
+
     // =====================================================
     // Check if a specific user liked this tweet
     // =====================================================
@@ -63,9 +83,18 @@ class Tweet extends Model
 
     public function isRetweetedBy(User $user): bool
     {
-        return Retweet::where('user_id', $user->id)
-            ->where('tweet_id', $this->id)
+        return $this->retweets()
+            ->where('user_id', $user->id)
+            ->exists()
+            || $this->quotedBy()
+            ->where('user_id', $user->id)
             ->exists();
+    }
+
+    public function getRetweetsCountAttribute(): int
+    {
+        return (int) ($this->getRawOriginal('retweets_count') ?? 0)
+            + (int) ($this->getRawOriginal('quote_tweets_count') ?? 0);
     }
 
     // =====================================================
@@ -103,16 +132,6 @@ class Tweet extends Model
     public function quoteTweet(): BelongsTo
     {
         return $this->belongsTo(Tweet::class, 'quote_tweet_id');
-    }
-
-    // =====================================================
-    // Quoted By
-    // All tweets that quoted this tweet
-    // =====================================================
-
-    public function quotedBy(): HasMany
-    {
-        return $this->hasMany(Tweet::class, 'quote_tweet_id');
     }
 
     // =====================================================
