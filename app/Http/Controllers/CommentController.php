@@ -58,11 +58,9 @@ class CommentController extends Controller
 
         if ($tweet->user_id !== auth()->id()) {
 
-            Notification::firstOrCreate([
-                'user_id' => $tweet->user_id,
-                'actor_id' => auth()->id(),
-                'tweet_id' => $tweet->id,
-                'type' => 'comment',
+            Notification::send($tweet->user_id, [
+                'message' => auth()->user()->name . ' commented on your tweet.',
+                'target' => route('tweets.show', $tweet),
             ]);
 
         }
@@ -99,4 +97,3 @@ class CommentController extends Controller
         return back();
     }
 }
-

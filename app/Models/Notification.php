@@ -7,22 +7,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
-    // =====================================================
-    // Mass Assignable Attributes
-    // =====================================================
 
     protected $fillable = [
         'user_id',
-        'actor_id',
-        'tweet_id',
-        'type',
-        'is_read',
+        'content',
+        'read_at',
     ];
 
-    // =====================================================
+    protected $casts = [
+        'content' => 'array',
+        'read_at' => 'datetime',
+    ];
+
     // Notification Owner
-    // User who receives the notification
-    // =====================================================
 
     public function user(): BelongsTo
     {
@@ -30,22 +27,30 @@ class Notification extends Model
     }
 
     // =====================================================
-    // Notification Actor
-    // User who performed the action
-    // =====================================================
+    // Create Notification
 
-    public function actor(): BelongsTo
+    public static function send(int $userId, array $content): void
     {
-        return $this->belongsTo(User::class, 'actor_id');
-    }
+        $actor = auth()->user();
+        $actorAvatar = null;
 
-    // =====================================================
-    // Related Tweet
-    // Tweet associated with the notification
-    // =====================================================
+        if ($actor) {
+            $actorAvatar = $actor->medias
+                ->where('collection', 'avatar')
+                ->first();
+        }
 
-    public function tweet(): BelongsTo
-    {
-        return $this->belongsTo(Tweet::class);
+        self::create([
+            'user_id' => $userId,
+            'content' => array_merge($content, [
+                'actor' => [
+                    'id' => $actor?->id,
+                    'name' => $actor?->name,
+                    'username' => $actor?->username,
+                    'avatar' => $actorAvatar?->path,
+                ],
+            ]),
+            'read_at' => null,
+        ]);
     }
 }

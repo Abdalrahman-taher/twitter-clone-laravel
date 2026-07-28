@@ -16,6 +16,7 @@ class FollowController extends Controller
     {
         // Get authenticated user
         $authUser = auth()->user();
+        $alreadyFollowing = $authUser->isFollowing($user);
 
         // Follow selected user
         $authUser->follow($user);
@@ -25,13 +26,11 @@ class FollowController extends Controller
         // Don't notify yourself
         // =====================================================
 
-        if ($authUser->id !== $user->id) {
+        if ($authUser->id !== $user->id && !$alreadyFollowing) {
 
-            Notification::firstOrCreate([
-                'user_id'  => $user->id,
-                'actor_id' => $authUser->id,
-                'type'     => 'follow',
-                'tweet_id' => null,
+            Notification::send($user->id, [
+                'message' => $authUser->name . ' started following you.',
+                'target' => route('profile.show', $authUser),
             ]);
 
         }
@@ -56,12 +55,9 @@ class FollowController extends Controller
         // Remove Follow Notification
         // =====================================================
 
-        Notification::where([
-            'user_id' => $user->id,
-            'actor_id' => $authUser->id,
-            'type' => 'follow',
-        ])
-            ->whereNull('tweet_id')
+        Notification::where('user_id', $user->id)
+            ->where('content->message', $authUser->name . ' started following you.')
+            ->where('content->target', route('profile.show', $authUser))
             ->delete();
 
         // Return back

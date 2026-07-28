@@ -48,11 +48,9 @@ class RetweetController extends Controller
 
             if ($tweet->user_id !== $userId) {
 
-                Notification::create([
-                    'user_id' => $tweet->user_id,
-                    'actor_id' => $userId,
-                    'tweet_id' => $tweet->id,
-                    'type' => 'retweet',
+                Notification::send($tweet->user_id, [
+                    'message' => auth()->user()->name . ' retweeted your tweet.',
+                    'target' => route('tweets.show', $tweet),
                 ]);
 
             }
@@ -94,11 +92,9 @@ class RetweetController extends Controller
 
         if ($tweet->user_id !== $userId) {
 
-            Notification::firstOrCreate([
-                'user_id' => $tweet->user_id,
-                'actor_id' => $userId,
-                'tweet_id' => $tweet->id,
-                'type' => 'quote',
+            Notification::send($tweet->user_id, [
+                'message' => auth()->user()->name . ' quoted your tweet.',
+                'target' => route('tweets.show', $tweet),
             ]);
 
         }

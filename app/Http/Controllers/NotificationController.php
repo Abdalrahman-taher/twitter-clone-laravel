@@ -15,15 +15,11 @@ class NotificationController extends Controller
     {
         // =====================================================
         // Load User Notifications
-        // Get latest notifications with actor and tweet
+        // Get latest notifications
         // =====================================================
 
         $notifications = auth()->user()
             ->notifications()
-            ->with([
-                'actor.medias',
-                'tweet',
-            ])
             ->latest()
             ->get();
 
@@ -33,9 +29,9 @@ class NotificationController extends Controller
 
         auth()->user()
             ->notifications()
-            ->where('is_read', false)
+            ->whereNull('read_at')
             ->update([
-                'is_read' => true,
+                'read_at' => now(),
             ]);
 
         // =====================================================

@@ -49,36 +49,20 @@ class TweetController extends Controller
 
         $result = $authUser->likes()->toggle($tweet->id);
 
-        if (
-            $tweet->user_id !== auth()->id() &&
-            auth()->user()->likes()->where('tweet_id', $tweet->id)->exists()
-        ) {
-            Notification::create([
-                'user_id' => $tweet->user_id,
-                'actor_id' => auth()->id(),
-                'tweet_id' => $tweet->id,
-                'type' => 'like',
-            ]);
-        }
-
         if (!empty($result['attached'])) {
             if ($tweet->user_id !== $authUser->id) {
-                Notification::firstOrCreate([
-                    'user_id' => $tweet->user_id,
-                    'actor_id' => $authUser->id,
-                    'tweet_id' => $tweet->id,
-                    'type' => 'like',
+                Notification::send($tweet->user_id, [
+                    'message' => $authUser->name . ' liked your tweet.',
+                    'target' => route('tweets.show', $tweet),
                 ]);
             }
         }
 
         if (!empty($result['detached'])) {
-            Notification::where([
-                'user_id' => $tweet->user_id,
-                'actor_id' => $authUser->id,
-                'tweet_id' => $tweet->id,
-                'type' => 'like',
-            ])->delete();
+            Notification::where('user_id', $tweet->user_id)
+                ->where('content->message', $authUser->name . ' liked your tweet.')
+                ->where('content->target', route('tweets.show', $tweet))
+                ->delete();
         }
 
         return back();
