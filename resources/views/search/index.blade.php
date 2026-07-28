@@ -2,7 +2,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Search / Twitter Clone</title>
+    <title>Explore / Twitter Clone</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -32,7 +32,7 @@
 
                         <div class="min-w-0">
                             <h1 class="text-xl font-bold leading-6 text-white">
-                                Search
+                                Explore
                             </h1>
 
                             @if($query)
@@ -41,20 +41,20 @@
                                 </p>
                             @else
                                 <p class="truncate text-sm leading-5 text-gray-400">
-                                    Find people and tweets
+                                    Find people, tweets and trends
                                 </p>
                             @endif
                         </div>
                     </div>
 
                     <form action="{{ route('search.index') }}" method="GET" class="mt-3">
-                        <label for="search-page-query" class="sr-only">Search</label>
+                        <label for="search-page-query" class="sr-only">Explore</label>
 
                         <div class="relative">
                             <button
                                 type="submit"
                                 class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition duration-200 hover:text-blue-300"
-                                aria-label="Search">
+                                aria-label="Explore">
 
                                 <svg class="h-4 w-4 fill-current" viewBox="0 0 56.966 56.966">
                                     <path
