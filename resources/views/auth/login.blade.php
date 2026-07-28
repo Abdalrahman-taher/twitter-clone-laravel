@@ -1,105 +1,111 @@
-<x-guest-layout>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div class="flex min-h-screen items-center justify-center">
+        <title>{{ config('app.name', 'Twitter') }} - Sign in</title>
 
-        <div class="min-h-1/2 bg-gray-900 border border-gray-900 rounded-2xl">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
-            <div class="mx-4 sm:mx-24 md:mx-34 lg:mx-56 mx-auto flex items-center space-y-4 py-16 font-semibold text-gray-500 flex-col">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="bg-[#15202b] font-sans text-white antialiased">
+        <main class="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+            <section class="w-full max-w-[440px] rounded-2xl border border-gray-800 bg-gray-900/95 px-6 py-8 shadow-2xl shadow-black/30 sm:px-10 sm:py-10">
+                <div class="mb-8 flex flex-col items-center text-center">
+                    <a
+                        href="/"
+                        class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full text-white transition duration-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900"
+                        aria-label="Twitter home">
+                        <svg viewBox="0 0 24 24" class="h-12 w-12" fill="currentColor" aria-hidden="true">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+                        </svg>
+                    </a>
 
-                <svg viewBox="0 0 24 24" class="h-12 w-12 text-white" fill="currentColor">
-                    <g>
-                        <path
-                            d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z">
-                        </path>
-                    </g>
-                </svg>
+                    <h1 class="text-2xl font-bold leading-tight text-white sm:text-3xl">
+                        Sign in to Twitter
+                    </h1>
+                </div>
 
-                <h1 class="text-white text-2xl">
-                    Log in to Twitter
-                </h1>
+                <x-auth-session-status class="mb-5 w-full rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm font-medium text-blue-100" :status="session('status')" />
 
-                <!-- Session Status -->
-                <x-auth-session-status class="w-full" :status="session('status')" />
-
-                <form method="POST" action="{{ route('login') }}" class="w-full space-y-4">
+                <form method="POST" action="{{ route('login') }}" class="space-y-5">
                     @csrf
 
-                    <!-- Email Address -->
                     <div>
-                        <x-text-input
+                        <label for="email" class="mb-2 block text-sm font-semibold text-gray-200">
+                            Email
+                        </label>
+                        <input
                             id="email"
-                            class="w-full p-2 bg-gray-900 border border-gray-700 rounded-md focus:border-blue-700"
+                            class="block w-full rounded-xl border border-gray-700 bg-[#15202b] px-4 py-3 text-base text-white placeholder-gray-500 transition duration-200 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40"
                             type="email"
                             name="email"
-                            :value="old('email')"
-                            placeholder="Email"
+                            value="{{ old('email') }}"
+                            placeholder="Email address"
                             required
                             autofocus
-                            autocomplete="username" />
+                            autocomplete="username">
 
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-400" />
                     </div>
 
-                    <!-- Password -->
                     <div>
-                        <x-text-input
+                        <label for="password" class="mb-2 block text-sm font-semibold text-gray-200">
+                            Password
+                        </label>
+                        <input
                             id="password"
-                            class="w-full p-2 bg-gray-900 border border-gray-700 rounded-md"
+                            class="block w-full rounded-xl border border-gray-700 bg-[#15202b] px-4 py-3 text-base text-white placeholder-gray-500 transition duration-200 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40"
                             type="password"
                             name="password"
                             placeholder="Password"
                             required
-                            autocomplete="current-password" />
+                            autocomplete="current-password">
 
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-400" />
                     </div>
 
-                    <!-- Remember Me -->
-                    <div class="flex items-center">
-                        <input
-                            id="remember_me"
-                            type="checkbox"
-                            name="remember"
-                            class="rounded border-gray-700 bg-gray-900 text-blue-600">
+                    <div class="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                        <label for="remember_me" class="inline-flex cursor-pointer items-center gap-2 text-gray-300">
+                            <input
+                                id="remember_me"
+                                type="checkbox"
+                                name="remember"
+                                class="h-4 w-4 rounded border-gray-700 bg-[#15202b] text-blue-500 focus:ring-2 focus:ring-blue-400 focus:ring-offset-0">
+                            <span>Remember me</span>
+                        </label>
 
-                        <span class="ml-2 text-sm text-gray-400">
-                            Remember me
-                        </span>
-                    </div>
-
-                    <!-- Login Button -->
-                    <x-primary-button
-                        class="w-full justify-center rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200">
-                        Log in
-                    </x-primary-button>
-
-                    <!-- Forgot Password -->
-                    @if (Route::has('password.request'))
-                        <div class="text-center">
+                        @if (Route::has('password.request'))
                             <a
                                 href="{{ route('password.request') }}"
-                                class="text-sm text-gray-400 hover:text-white">
-                                Forgot your password?
+                                class="font-medium text-blue-400 transition duration-200 hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                Forgot password?
                             </a>
-                        </div>
+                        @endif
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="inline-flex w-full items-center justify-center rounded-full bg-blue-500 px-5 py-3 text-base font-bold text-white transition duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                        Log in
+                    </button>
+
+                    @if (Route::has('register'))
+                        <p class="border-t border-gray-800 pt-5 text-center text-sm text-gray-400">
+                            Don't have an account?
+                            <a
+                                href="{{ route('register') }}"
+                                class="font-semibold text-blue-400 transition duration-200 hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                Create account
+                            </a>
+                        </p>
                     @endif
-
-                    <!-- Register -->
-                    <p class="text-center text-gray-400">
-                        Don't have an account?
-                        <a
-                            href="{{ route('register') }}"
-                            class="font-semibold text-sky-500">
-                            Register
-                        </a>
-                    </p>
-
                 </form>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</x-guest-layout>
+            </section>
+        </main>
+    </body>
+</html>
