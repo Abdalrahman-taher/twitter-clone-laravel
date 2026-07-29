@@ -10,7 +10,7 @@
 @endphp
 
 <div class="flex h-full min-h-0 flex-col">
-    <div class="sticky top-0 z-10 shrink-0 border-b border-gray-800 bg-[#15202b]/95 px-4 py-3 backdrop-blur sm:px-5">
+    <x-sticky-page-header class="shrink-0 px-4 py-3 sm:px-5">
         <div class="flex items-center justify-between gap-4">
             <div class="flex min-w-0 items-center gap-3">
                 <a href="{{ route('messages.index') }}"
@@ -54,7 +54,7 @@
                 </div>
             @endif
         </div>
-    </div>
+    </x-sticky-page-header>
 
     <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5">
         @forelse($messages as $message)

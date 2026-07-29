@@ -136,36 +136,10 @@
                             {{-- Current User Avatar                                      --}}
                             {{-- Avatar comes from User Media collection                  --}}
                             {{-- ========================================================= --}}
-
-                            @php
-                                $avatar = auth()->user()->medias
-                                    ->where('collection', 'avatar')
-                                    ->first();
-                            @endphp
-
-
-                            @if($avatar)
-
-                                <img
-                                    src="{{ asset('storage/' . $avatar->path) }}"
-                                    alt="{{ auth()->user()->name }}"
-                                    class="inline-block h-10 w-10 rounded-full object-cover">
-
-                            @else
-
-                                <div class="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-
-                                    <svg class="h-6 w-6 text-gray-400"
-                                         fill="currentColor"
-                                         viewBox="0 0 24 24">
-
-                                        <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
-
-                                    </svg>
-
-                                </div>
-
-                            @endif
+                            <x-user-avatar
+                                :user="auth()->user()"
+                                class="inline-block h-10 w-10 rounded-full"
+                            />
 
                         </div>
 

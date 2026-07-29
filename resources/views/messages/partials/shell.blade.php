@@ -6,11 +6,11 @@
     <div class="grid h-full grid-cols-1 overflow-hidden border-x border-gray-800 md:grid-cols-12">
 
         <aside class="{{ $activeConversation ? 'hidden md:flex' : 'flex' }} h-full min-h-0 flex-col border-r border-gray-800 md:col-span-5 lg:col-span-4">
-            <div class="sticky top-0 z-10 shrink-0 border-b border-gray-800 bg-[#15202b]/95 px-5 py-4 backdrop-blur">
+            <x-sticky-page-header class="shrink-0 px-5 py-4">
                 <h1 class="text-xl font-extrabold text-white">
                     Messages
                 </h1>
-            </div>
+            </x-sticky-page-header>
 
             <div class="min-h-0 flex-1 overflow-y-auto">
                 @forelse($conversations as $item)

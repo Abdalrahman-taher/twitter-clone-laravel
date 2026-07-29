@@ -4,73 +4,12 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
-Alpine.data('mediaComposer', (imageInputId, videoInputId) => ({
-    previews: [],
-
-    syncMedia(event) {
-        if (!event.target.matches('input[type="file"]')) {
-            return;
-        }
-
-        this.rebuildPreviews();
-    },
-
-    rebuildPreviews() {
-        this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
-        this.previews = [];
-
-        this.addFilesFromInput(imageInputId, 'image');
-        this.addFilesFromInput(videoInputId, 'video');
-    },
-
-    addFilesFromInput(inputId, type) {
-        const input = document.getElementById(inputId);
-
-        if (!input || !input.files) {
-            return;
-        }
-
-        Array.from(input.files).forEach((file, index) => {
-            this.previews.push({
-                id: `${inputId}-${index}-${file.name}-${file.lastModified}`,
-                inputId,
-                index,
-                type,
-                url: URL.createObjectURL(file),
-            });
-        });
-    },
-
-    removeMedia(preview) {
-        const input = document.getElementById(preview.inputId);
-
-        if (!input || !input.files) {
-            return;
-        }
-
-        const transfer = new DataTransfer();
-
-        Array.from(input.files).forEach((file, index) => {
-            if (index !== preview.index) {
-                transfer.items.add(file);
-            }
-        });
-
-        input.files = transfer.files;
-        this.rebuildPreviews();
-    },
-
-    destroy() {
-        this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
-    },
-}));
-
-Alpine.data('messageComposer', (imageInputId, videoInputId) => ({
-    body: '',
+const createFilePreviewComposer = (withBody = false) => (imageInputId, videoInputId) => ({
+    body: withBody ? '' : undefined,
     previews: [],
 
     get canSubmit() {
-        return this.body.trim().length > 0 || this.previews.length > 0;
+        return withBody ? this.body.trim().length > 0 || this.previews.length > 0 : undefined;
     },
 
     syncMedia(event) {
@@ -127,6 +66,10 @@ Alpine.data('messageComposer', (imageInputId, videoInputId) => ({
     },
 
     resizeMessageInput(event) {
+        if (!withBody) {
+            return;
+        }
+
         const input = event.target;
         input.style.height = 'auto';
         input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
@@ -135,7 +78,10 @@ Alpine.data('messageComposer', (imageInputId, videoInputId) => ({
     destroy() {
         this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
     },
-}));
+});
+
+Alpine.data('mediaComposer', createFilePreviewComposer());
+Alpine.data('messageComposer', createFilePreviewComposer(true));
 
 Alpine.data('mediaGallery', (images) => ({
     images,

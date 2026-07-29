@@ -26,34 +26,10 @@
 
         {{-- User Profile Image --}}
         <div class="w-10 shrink-0 py-1">
-
-            {{-- ========================================================= --}}
-            {{-- Current User Avatar --}}
-            {{-- Avatar comes from User Media collection --}}
-            {{-- ========================================================= --}}
-
-            @php
-                $avatar = auth()->user()->medias
-                    ->where('collection', 'avatar')
-                    ->first();
-            @endphp
-
-
-            @if($avatar)
-
-                <img
-                    class="inline-block h-10 w-10 rounded-full object-cover"
-                    src="{{ asset('storage/' . $avatar->path) }}"
-                    alt="{{ auth()->user()->name }}">
-
-            @else
-
-                <img
-                    class="inline-block h-10 w-10 rounded-full"
-                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                    alt="Default Avatar">
-
-            @endif
+            <x-user-avatar
+                :user="auth()->user()"
+                class="inline-block h-10 w-10 rounded-full"
+            />
         </div>
 
         {{-- Tweet Text Area --}}

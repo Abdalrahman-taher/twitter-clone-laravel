@@ -1,29 +1,12 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.twitter-shell')
 
-    <title>{{ $user->name }} - Twitter Clone</title>
+@section('title', $user->name . ' - Twitter Clone')
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-<div class="p-relative min-h-screen" style="background-color: #15202b">
-    <div class="flex justify-center">
-        <header class="text-white h-12 py-4 h-auto">
-            @include('home.left-sidebar')
-        </header>
-
-        <main role="main">
-            <div class="flex" style="width: 990px;">
-                <div class="flex flex-col w-full border-x border-gray-800">
+@section('content')
+    <div class="flex" style="width: 990px;">
+        <div class="flex flex-col w-full border-x border-gray-800">
                     <div class="flex min-h-screen w-full flex-col text-white">
-                        <div class="border-b border-gray-800 px-4 py-3">
+                        <x-sticky-page-header>
                             <div class="flex items-center gap-4">
                                 <a href="{{ url()->previous() }}"
                                    class="rounded-full p-2 text-blue-400 hover:bg-gray-800 hover:text-blue-300">
@@ -38,7 +21,7 @@
                                     <p class="text-sm text-gray-400">{{ $tweets->count() }} Tweets</p>
                                 </div>
                             </div>
-                        </div>
+                        </x-sticky-page-header>
 
                         {{-- ========================================================= --}}
                         {{-- User Cover Image                                          --}}
@@ -66,48 +49,10 @@
 
                         <div class="border-b border-gray-800 px-4 pb-4">
                             <div class="-mt-16 flex items-end justify-between gap-4">
-                                <div
-                                    class="h-32 w-32 overflow-hidden rounded-full border-4 border-[#15202b] bg-gray-700">
-
-
-                                    {{-- ========================================================= --}}
-                                    {{-- User Avatar Image                                         --}}
-                                    {{-- Get avatar image from media collection instead of users --}}
-                                    {{-- ========================================================= --}}
-
-                                    @php
-                                        // Get the latest avatar file from user's media collection
-                                        $avatar = $user->medias
-                                            ->where('collection', 'avatar')
-                                            ->first();
-                                    @endphp
-
-                                    @if($avatar)
-
-                                        {{-- Display avatar image from media table --}}
-                                        <img
-                                            src="{{ asset('storage/' . $avatar->path) }}"
-                                            alt="{{ $user->name }}"
-                                            class="h-full w-full object-cover">
-
-                                    @else
-
-                                        {{-- Default avatar when user has no image --}}
-                                        <div
-                                            class="flex h-full w-full items-center justify-center bg-gray-700 text-gray-400">
-
-                                            <svg class="h-16 w-16" fill="currentColor" viewBox="0 0 24 24">
-
-                                                <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"></path>
-
-                                            </svg>
-
-                                        </div>
-
-                                    @endif
-
-
-                                </div>
+                                <x-user-avatar
+                                    :user="$user"
+                                    class="h-32 w-32 overflow-hidden rounded-full border-4 border-[#15202b] bg-gray-700"
+                                />
                                 {{-- ===================================================== --}}
                                 {{-- Profile Action Button                                 --}}
                                 {{-- Show Edit button for owner                             --}}
@@ -313,34 +258,6 @@
                 </div>
 
                 @include('home.right-sidebar')
-            </div>
-        </main>
+        </div>
     </div>
-</div>
-
-<style>
-    .overflow-y-auto::-webkit-scrollbar, .overflow-y-scroll::-webkit-scrollbar, .overflow-x-auto::-webkit-scrollbar, .overflow-x::-webkit-scrollbar, .overflow-x-scroll::-webkit-scrollbar, .overflow-y::-webkit-scrollbar, body::-webkit-scrollbar {
-        display: none;
-    }
-
-    .overflow-y-auto, .overflow-y-scroll, .overflow-x-auto, .overflow-x, .overflow-x-scroll, .overflow-y, body {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    .bg-dim-700 {
-        --bg-opacity: 1;
-        background-color: #192734;
-    }
-
-    html, body {
-        margin: 0;
-        background-color: #15202b;
-    }
-
-    svg.paint-icon {
-        fill: currentcolor;
-    }
-</style>
-</body>
-</html>
+@endsection

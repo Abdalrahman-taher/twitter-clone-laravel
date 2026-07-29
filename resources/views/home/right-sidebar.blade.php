@@ -101,33 +101,10 @@
                             <a href="{{ route('profile.show', $user) }}"
                                class="flex items-center gap-3 min-w-0">
 
-                                @php
-                                    $avatar = $user->medias
-                                        ->where('collection', 'avatar')
-                                        ->first();
-                                @endphp
-
-
-                                @if($avatar)
-
-                                    <img
-                                        src="{{ asset('storage/' . $avatar->path) }}"
-                                        class="h-10 w-10 rounded-full object-cover">
-
-                                @else
-
-                                    <div
-                                        class="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-400">
-                                        <svg class="h-5 w-5"
-                                             fill="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
-
-                                        </svg>
-                                    </div>
-
-                                @endif
+                                <x-user-avatar
+                                    :user="$user"
+                                    class="h-10 w-10 rounded-full"
+                                />
 
 
                                 <div class="min-w-0">

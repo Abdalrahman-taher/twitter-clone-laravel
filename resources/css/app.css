@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
+body.twitter-shell {
+    margin: 0;
+    background-color: #15202b;
+}
+
+body.twitter-shell [x-cloak] {
     display: none !important;
+}
+
+body.twitter-shell .overflow-y-auto::-webkit-scrollbar,
+body.twitter-shell .overflow-y-scroll::-webkit-scrollbar,
+body.twitter-shell .overflow-x-auto::-webkit-scrollbar,
+body.twitter-shell .overflow-x::-webkit-scrollbar,
+body.twitter-shell .overflow-x-scroll::-webkit-scrollbar,
+body.twitter-shell .overflow-y::-webkit-scrollbar,
+body.twitter-shell::-webkit-scrollbar {
+    display: none;
+}
+
+body.twitter-shell .overflow-y-auto,
+body.twitter-shell .overflow-y-scroll,
+body.twitter-shell .overflow-x-auto,
+body.twitter-shell .overflow-x,
+body.twitter-shell .overflow-x-scroll,
+body.twitter-shell .overflow-y,
+body.twitter-shell {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body.twitter-shell .bg-dim-700 {
+    --bg-opacity: 1;
+    background-color: #192734;
+}
+
+body.twitter-shell svg.paint-icon {
+    fill: currentColor;
 }

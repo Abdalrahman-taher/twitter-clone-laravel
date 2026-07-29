@@ -1,46 +1,26 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.twitter-shell')
 
-        <title>Messages - Twitter Clone</title>
+@section('title', 'Messages - Twitter Clone')
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+@section('content')
+    @php
+        $conversations = auth()->user()
+            ->conversations()
+            ->with('users.medias')
+            ->latest()
+            ->get();
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
+        $otherUser = $conversation->users
+            ->firstWhere('id', '!=', auth()->id());
+    @endphp
 
-    <body class="font-sans antialiased">
-        @php
-            $conversations = auth()->user()
-                ->conversations()
-                ->with('users.medias')
-                ->latest()
-                ->get();
-
-            $otherUser = $conversation->users
-                ->firstWhere('id', '!=', auth()->id());
-        @endphp
-
-        <div class="h-screen overflow-hidden bg-[#15202b] text-white">
-            <div class="flex h-full justify-center">
-                <header class="hidden h-full text-white md:block">
-                    @include('home.left-sidebar')
-                </header>
-
-                <main role="main" class="h-full min-w-0">
-                    <div class="h-full w-screen md:w-[990px]">
-                        @include('messages.partials.shell', [
-                            'conversations' => $conversations,
-                            'activeConversation' => $conversation,
-                            'panel' => 'messages.partials.conversation-panel',
-                        ])
-                    </div>
-                </main>
-            </div>
+    <div class="h-screen overflow-hidden bg-[#15202b] text-white">
+        <div class="h-full w-screen md:w-[990px]">
+            @include('messages.partials.shell', [
+                'conversations' => $conversations,
+                'activeConversation' => $conversation,
+                'panel' => 'messages.partials.conversation-panel',
+            ])
         </div>
-    </body>
-</html>
+    </div>
+@endsection

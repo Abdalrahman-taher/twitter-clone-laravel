@@ -13,10 +13,6 @@
         'quoteTweet.medias',
     ]);
 
-    $commentAvatar = $comment->user->medias
-        ->where('collection', 'avatar')
-        ->first();
-
     $commentHandle = $comment->user->username
         ? '@' . ltrim($comment->user->username, '@')
         : '@username';
@@ -26,26 +22,10 @@
 
     <a href="{{ route('profile.show', $comment->user) }}"
        class="h-8 w-8 shrink-0 overflow-hidden rounded-full">
-
-        @if($commentAvatar)
-
-            <img
-                class="h-full w-full object-cover"
-                src="{{ asset('storage/' . $commentAvatar->path) }}"
-                alt="{{ $comment->user->name }}">
-
-        @else
-
-            <div
-                class="flex h-full w-full items-center justify-center bg-gray-700 text-gray-500">
-                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
-                </svg>
-            </div>
-
-        @endif
-
+        <x-user-avatar
+            :user="$comment->user"
+            class="h-8 w-8 shrink-0 overflow-hidden rounded-full"
+        />
     </a>
 
     <div class="min-w-0 flex-1">

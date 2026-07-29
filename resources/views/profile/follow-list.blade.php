@@ -1,37 +1,12 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('layouts.twitter-shell')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@section('title', $title . ' - ' . $profileUser->name)
 
-    <title>{{ $title }} - {{ $profileUser->name }}</title>
+@section('content')
+    <div class="flex" style="width:990px;">
+        <div class="flex w-full flex-col border-x border-gray-800">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body>
-
-<div class="p-relative min-h-screen" style="background-color:#15202b">
-
-    <div class="flex justify-center">
-
-        <header class="text-white h-12 py-4 h-auto">
-            @include('home.left-sidebar')
-        </header>
-
-        <main role="main">
-
-            <div class="flex" style="width:990px;">
-
-                <div class="flex w-full flex-col border-x border-gray-800">
-
-                    {{-- Header --}}
-                    <div class="border-b border-gray-800 px-4 py-3">
+                    <x-sticky-page-header>
 
                         <div class="flex items-center gap-4">
 
@@ -58,39 +33,20 @@
 
                         </div>
 
-                    </div>
+                    </x-sticky-page-header>
 
 
                     @forelse($users as $user)
-
-                        @php
-                            $avatar = $user->medias
-                                ->where('collection','avatar')
-                                ->first();
-                        @endphp
 
                         <div class="flex items-center justify-between border-b border-gray-800 p-4 hover:bg-gray-800 transition">
 
                             <a href="{{ route('profile.show',$user) }}"
                                class="flex items-center gap-3 flex-1">
 
-                                @if($avatar)
-
-                                    <img
-                                        src="{{ asset('storage/'.$avatar->path) }}"
-                                        class="h-12 w-12 rounded-full object-cover">
-
-                                @else
-
-                                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
-
-                                        <svg class="h-7 w-7 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
-                                        </svg>
-
-                                    </div>
-
-                                @endif
+                                <x-user-avatar
+                                    :user="$user"
+                                    class="h-12 w-12 rounded-full"
+                                />
 
                                 <div>
 
@@ -161,15 +117,6 @@
                 </div>
 
                 @include('home.right-sidebar')
-
-            </div>
-
-        </main>
-
+        </div>
     </div>
-
-</div>
-
-</body>
-
-</html>
+@endsection

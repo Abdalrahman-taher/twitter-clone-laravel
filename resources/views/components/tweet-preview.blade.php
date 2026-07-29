@@ -3,10 +3,6 @@
 ])
 
 @php
-    $avatar = $tweet->user->medias
-        ->where('collection', 'avatar')
-        ->first();
-
     $handle = $tweet->user->username
         ? '@' . ltrim($tweet->user->username, '@')
         : '@username';
@@ -17,22 +13,10 @@
 
     <div class="flex min-w-0 items-center gap-2">
 
-        <span class="h-5 w-5 shrink-0 overflow-hidden rounded-full bg-gray-700">
-
-            @if($avatar)
-                <img
-                    src="{{ asset('storage/' . $avatar->path) }}"
-                    alt="{{ $tweet->user->name }}"
-                    class="h-full w-full object-cover">
-            @else
-                <span class="flex h-full w-full items-center justify-center text-gray-500">
-                    <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 1116 0H4z"/>
-                    </svg>
-                </span>
-            @endif
-
-        </span>
+        <x-user-avatar
+            :user="$tweet->user"
+            class="h-5 w-5 shrink-0 overflow-hidden rounded-full bg-gray-700"
+        />
 
         <a
             href="{{ route('tweets.show', $tweet) }}"
