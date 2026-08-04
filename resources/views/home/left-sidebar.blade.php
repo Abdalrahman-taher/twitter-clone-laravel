@@ -37,7 +37,9 @@
                 </svg>
                 Notifications
                 @if(($unreadNotificationsCount ?? 0) > 0)
-                    <span class="ml-auto inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
+                    <span
+                        id="notifications-count"
+                        class="ml-auto inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
                         {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
                     </span>
                 @endif

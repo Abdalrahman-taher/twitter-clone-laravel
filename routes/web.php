@@ -12,8 +12,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
-
-
+use Kreait\Firebase\Contract\Database;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -70,6 +69,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'send'])->name('messages.send');
 
+    // Firebase Test Route (Temporary)
+    Route::get('/test-firebase', function (Database $database) {
+        $database->getReference('test')->set([
+            'message' => 'Firebase Connected Successfully!',
+            'time' => now()->toDateTimeString(),
+        ]);
+
+        return 'Firebase connection successful!';
+    });
 });
 
 require __DIR__.'/auth.php';

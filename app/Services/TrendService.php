@@ -14,7 +14,7 @@ class TrendService
 
     public function topHashtags(): Collection
     {
-        return Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
+        $trends = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
             $counts = [];
 
             Tweet::query()
@@ -41,8 +41,11 @@ class TrendService
                         'tweets_count' => $count,
                     ];
                 })
-                ->values();
+                ->values()
+                ->all();
         });
+
+        return collect($trends);
     }
 
     private function countHashtags(array &$counts, ?string $body): void

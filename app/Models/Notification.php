@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Services\FirebaseService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
-
     protected $fillable = [
         'user_id',
         'content',
@@ -20,7 +20,6 @@ class Notification extends Model
     ];
 
     // Notification Owner
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -28,9 +27,11 @@ class Notification extends Model
 
     // =====================================================
     // Create Notification
+    // =====================================================
 
     public static function send(int $userId, array $content): void
     {
+
         $actor = auth()->user();
         $actorAvatar = null;
 
@@ -40,7 +41,7 @@ class Notification extends Model
                 ->first();
         }
 
-        self::create([
+        $notificationData = [
             'user_id' => $userId,
             'content' => array_merge($content, [
                 'actor' => [
@@ -51,6 +52,9 @@ class Notification extends Model
                 ],
             ]),
             'read_at' => null,
-        ]);
+        ];
+
+        self::create($notificationData);
+        app(FirebaseService::class)->sendNotification($notificationData);
     }
 }

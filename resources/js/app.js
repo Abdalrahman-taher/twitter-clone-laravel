@@ -1,9 +1,59 @@
-
-
 import Alpine from 'alpinejs';
+import {initializeApp} from 'firebase/app';
+import {getDatabase, ref, onChildAdded, get} from 'firebase/database';
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCvnFynxENh-Awr5dCJv0jpSaJ5Uh_WtNs",
+    authDomain: "twitter-clone-7bd46.firebaseapp.com",
+    databaseURL: "https://twitter-clone-7bd46-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "twitter-clone-7bd46",
+    storageBucket: "twitter-clone-7bd46.firebasestorage.app",
+    messagingSenderId: "180591014223",
+    appId: "1:180591014223:web:1dc4629966458016e7153a",
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const database = getDatabase(firebaseApp);
+
+// Read the current badge value shown on the page
+let notificationsCount = Number(
+    document.getElementById('notifications-count')?.innerText ?? 0
+);
+
+if (window.authUserId) {
+    const notificationsRef = ref(database, `notifications/${window.authUserId}`);
+
+    // Load existing notifications first
+    get(notificationsRef).then((snapshot) => {
+        const existingNotificationKeys = new Set();
+
+        snapshot.forEach((childSnapshot) => {
+            existingNotificationKeys.add(childSnapshot.key);
+        });
+
+        // Listen for new notifications
+        onChildAdded(notificationsRef, (childSnapshot) => {
+            if (existingNotificationKeys.has(childSnapshot.key)) {
+                return;
+            }
+
+            notificationsCount++;
+
+            // Update the notification badge
+            const badge = document.getElementById('notifications-count');
+            if (badge) {
+                badge.innerText = notificationsCount;
+                if (notificationsCount > 0) {
+                    badge.style.display = 'inline-flex';
+                }
+            }
+        });
+    });
+}
+
 
 window.Alpine = Alpine;
-
 const createFilePreviewComposer = (withBody = false) => (imageInputId, videoInputId) => ({
     body: withBody ? '' : undefined,
     previews: [],
@@ -114,7 +164,7 @@ Alpine.data('tweetShare', (title, url) => ({
     async share() {
         if (navigator.share) {
             try {
-                await navigator.share({ title, url });
+                await navigator.share({title, url});
                 return;
             } catch (error) {
                 if (error.name === 'AbortError') {

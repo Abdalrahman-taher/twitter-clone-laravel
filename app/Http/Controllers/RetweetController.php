@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRetweetRequest;
-use App\Models\Retweet;
 use App\Models\Tweet;
 use App\Models\Notification;
 
@@ -16,40 +15,56 @@ class RetweetController extends Controller
     public function toggle(Tweet $tweet)
     {
         $userId = auth()->id();
-        $alreadyInteracted = $tweet->retweets()
+        $authUser = auth()->user();
+        $hasRetweet = $tweet->retweets()
+            ->wherePivot('user_id', $userId)
+            ->exists();
+        $hasQuote = $tweet->quotedBy()
             ->where('user_id', $userId)
-            ->exists()
-            || $tweet->quotedBy()
-                ->where('user_id', $userId)
-                ->exists();
+            ->exists();
 
-        // Undo retweet or quote tweet
-        if ($alreadyInteracted) {
-
-            $tweet->retweets()
-                ->where('user_id', $userId)
-                ->detach();
+        // Switch quote tweet to retweet
+        if ($hasQuote) {
 
             $tweet->quotedBy()
                 ->where('user_id', $userId)
                 ->delete();
 
+            Notification::where('user_id', $tweet->user_id)
+                ->where('content->message', $authUser->name . ' quoted your tweet.')
+                ->where('content->target', route('tweets.show', $tweet))
+                ->delete();
+
+            if (!$hasRetweet) {
+                $tweet->retweets()->attach($userId);
+
+                if ($tweet->user_id !== $userId) {
+                    Notification::send($tweet->user_id, [
+                        'message' => $authUser->name . ' retweeted your tweet.',
+                        'target' => route('tweets.show', $tweet),
+                    ]);
+                }
+            }
+
+            return back();
+
         } else {
 
+            $result = $tweet->retweets()->toggle($userId);
+
+            if (!empty($result['detached'])) {
+                Notification::where('user_id', $tweet->user_id)
+                    ->where('content->message', $authUser->name . ' retweeted your tweet.')
+                    ->where('content->target', route('tweets.show', $tweet))
+                    ->delete();
+
+                return back();
+            }
+
             // Create new retweet
-            Retweet::create([
-                'user_id' => $userId,
-                'tweet_id' => $tweet->id,
-            ]);
-
-            // =====================================================
-            // Create Retweet Notification
-            // =====================================================
-
             if ($tweet->user_id !== $userId) {
-
                 Notification::send($tweet->user_id, [
-                    'message' => auth()->user()->name . ' retweeted your tweet.',
+                    'message' => $authUser->name . ' retweeted your tweet.',
                     'target' => route('tweets.show', $tweet),
                 ]);
 
@@ -67,16 +82,27 @@ class RetweetController extends Controller
     public function store(StoreRetweetRequest $request, Tweet $tweet)
     {
         $userId = auth()->id();
+        $authUser = auth()->user();
 
-        $alreadyInteracted = $tweet->retweets()
+        $hasQuote = $tweet->quotedBy()
             ->where('user_id', $userId)
-            ->exists()
-            || $tweet->quotedBy()
-                ->where('user_id', $userId)
-                ->exists();
+            ->exists();
 
-        if ($alreadyInteracted) {
+        if ($hasQuote) {
             return back();
+        }
+
+        $hasRetweet = $tweet->retweets()
+            ->wherePivot('user_id', $userId)
+            ->exists();
+
+        if ($hasRetweet) {
+            $tweet->retweets()->detach($userId);
+
+            Notification::where('user_id', $tweet->user_id)
+                ->where('content->message', $authUser->name . ' retweeted your tweet.')
+                ->where('content->target', route('tweets.show', $tweet))
+                ->delete();
         }
 
         // Create the quote tweet
@@ -93,7 +119,7 @@ class RetweetController extends Controller
         if ($tweet->user_id !== $userId) {
 
             Notification::send($tweet->user_id, [
-                'message' => auth()->user()->name . ' quoted your tweet.',
+                'message' => $authUser->name . ' quoted your tweet.',
                 'target' => route('tweets.show', $tweet),
             ]);
 
