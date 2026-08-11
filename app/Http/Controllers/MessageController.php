@@ -87,6 +87,28 @@ class MessageController extends Controller
 
 
     // =====================================================
+    // Message HTML
+    // Render a single message partial
+    // =====================================================
+
+    public function html(Message $message)
+    {
+        $message->load([
+            'sender.medias',
+            'medias',
+            'conversation.users',
+        ]);
+
+        abort_unless(
+            $message->conversation->users->contains(auth()->id()),
+            403
+        );
+
+        return view('messages.partials.message', compact('message'));
+    }
+
+
+    // =====================================================
     // Send Message
     // Store a new message inside conversation
     // =====================================================
@@ -139,6 +161,12 @@ class MessageController extends Controller
 
         // Broadcast the new message event
         broadcast(new MessageSent($message));
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message_id' => $message->id,
+            ]);
+        }
 
         return redirect()
             ->route('messages.show', $conversation)
