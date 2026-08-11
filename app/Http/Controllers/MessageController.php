@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Traits\HandlesMediaUploads;
-
+use App\Events\MessageSent;
 
 
 class MessageController extends Controller
@@ -51,7 +51,7 @@ class MessageController extends Controller
             ->first();
 
         // Create new conversation
-        if (! $conversation) {
+        if (!$conversation) {
 
             $conversation = Conversation::create();
 
@@ -101,9 +101,9 @@ class MessageController extends Controller
 
         if (
             empty($request->body) &&
-            ! $request->hasFile('message_images')
+            !$request->hasFile('message_images')
             &&
-            ! $request->hasFile('message_videos')
+            !$request->hasFile('message_videos')
 
         ) {
             return back();
@@ -121,7 +121,7 @@ class MessageController extends Controller
         ]);
 
 
-        // Upload images/videos
+// Upload images/videos
         $this->uploadMedia(
             $request,
             $message,
@@ -129,6 +129,16 @@ class MessageController extends Controller
             'message_videos',
             'message'
         );
+
+        // Load relations needed by the broadcast payload
+        $message->load([
+            'sender.medias',
+            'medias',
+            'conversation',
+        ]);
+
+        // Broadcast the new message event
+        broadcast(new MessageSent($message));
 
         return redirect()
             ->route('messages.show', $conversation)

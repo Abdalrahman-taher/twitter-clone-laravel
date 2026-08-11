@@ -18,6 +18,7 @@
     </script>
 
 </head>
+@stack('scripts')
 <body class="font-sans antialiased twitter-shell">
 <div class="min-h-screen bg-[#15202b] text-white">
     <div class="flex justify-center">

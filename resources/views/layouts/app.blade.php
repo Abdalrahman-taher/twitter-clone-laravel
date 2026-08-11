@@ -33,4 +33,9 @@
             </main>
         </div>
     </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.startConversationListener({{ $conversation->id }});
+        });
+    </script>
 </html>
